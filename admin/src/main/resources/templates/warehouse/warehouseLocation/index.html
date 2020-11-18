@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:mo="https://gitee.com/aun/Timo">
+<head th:replace="/common/template :: header(~{::title},~{::link},~{::style})">
+</head>
+<body class="timo-layout-page">
+    <div class="layui-card">
+        <div class="layui-card-header timo-card-header">
+            <span><i class="fa fa-bars"></i> 库位管理管理</span>
+            <i class="layui-icon layui-icon-refresh refresh-btn"></i>
+        </div>
+        <div class="layui-card-body">
+            <input hidden id="regionId" value="${regionId}">
+            <div class="layui-row timo-card-screen">
+                <div class="pull-left layui-form-pane timo-search-box">
+<!--                    <div class="layui-inline">-->
+<!--                        <label class="layui-form-label">状态</label>-->
+<!--                        <div class="layui-input-block timo-search-status">-->
+<!--                            <select class="timo-search-select" name="status" mo:dict="SEARCH_STATUS" mo-selected="${param.status}"></select>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                    <div class="layui-inline">
+                        <label class="layui-form-label">库位编码</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="code" th:value="${param.code}" placeholder="请输入库位编码" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+<!--                    <div class="layui-inline">-->
+<!--                        <label class="layui-form-label">库区表Id</label>-->
+<!--                        <div class="layui-input-block">-->
+<!--                            <input type="text" name="regionId" th:value="${param.regionId}" placeholder="请输入库区表Id" autocomplete="off" class="layui-input">-->
+<!--                        </div>-->
+<!--                    </div>-->
+                    <div class="layui-inline">
+                        <button class="layui-btn timo-search-btn">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="pull-right screen-btn-group">
+                    <button type="button" class="layui-btn upload-file" name="file[]"
+                            th:attr="up-url=@{/upload/image}" up-field="path">
+                        <i class="layui-icon">&#xe67c;</i>导入Excel
+                    </button>
+                    <button class="layui-btn open-popup" data-title="添加库位管理" th:attr="data-url=@{'/warehouse/warehouseLocation/add/'+${regionId}}" data-size="auto">
+                        <i class="fa fa-plus"></i> 添加</button>
+<!--                    <div class="btn-group">-->
+<!--                        <button class="layui-btn">操作<span class="caret"></span></button>-->
+<!--                        <dl class="layui-nav-child layui-anim layui-anim-upbit">-->
+<!--                            <dd><a class="ajax-status" th:href="@{/warehouse/warehouseLocation/status/ok}">启用</a></dd>-->
+<!--                            <dd><a class="ajax-status" th:href="@{/warehouse/warehouseLocation/status/freezed}">冻结</a></dd>-->
+<!--                            <dd><a class="ajax-status" th:href="@{/warehouse/warehouseLocation/status/delete}">删除</a></dd>-->
+<!--                        </dl>-->
+<!--                    </div>-->
+                </div>
+            </div>
+            <div class="timo-table-wrap">
+                <table class="layui-table timo-table">
+                    <thead>
+                    <tr>
+                        <th class="timo-table-checkbox">
+                            <label class="timo-checkbox"><input type="checkbox">
+                                <i class="layui-icon layui-icon-ok"></i></label>
+                        </th>
+                        <th>库位编码</th>
+                        <th>备注</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item:${list}">
+                        <td><label class="timo-checkbox"><input type="checkbox" th:value="${item.id}">
+                            <i class="layui-icon layui-icon-ok"></i></label></td>
+                        <td th:text="${item.code}">库位编码</td>
+                        <td th:text="${item.remark}">备注</td>
+                        <td>
+                            <a class="open-popup" data-title="编辑库位管理" th:attr="data-url=@{'/warehouse/warehouseLocation/edit/'+${item.id}+'/'+${regionId}}" data-size="auto" href="#">编辑</a>
+                            <a class="open-popup" data-title="详细信息" th:attr="data-url=@{'/warehouse/warehouseLocation/detail/'+${item.id}}" data-size="600,600" href="#">详细</a>
+                            <a class="ajax-get" data-msg="您是否确认删除" th:href="@{/warehouse/warehouseLocation/status/delete(ids=${item.id})}">删除</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div th:replace="/common/fragment :: page"></div>
+        </div>
+    </div>
+<script th:replace="/common/template :: script"></script>
+</body>
+</html>
