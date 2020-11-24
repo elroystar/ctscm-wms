@@ -34,6 +34,11 @@ public class WarehouseLocationServiceImpl implements WarehouseLocationService {
         return warehouseLocationRepository.findById(id).orElse(null);
     }
 
+    @Override
+    public WarehouseLocation checkCodeByRegionId(Long regionId, String code) {
+        return warehouseLocationRepository.checkCodeByRegionId(regionId, code);
+    }
+
     /**
      * 获取分页列表数据
      * @param example 查询实例

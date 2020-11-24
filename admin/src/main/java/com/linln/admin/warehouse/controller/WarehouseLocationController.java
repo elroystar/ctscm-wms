@@ -1,6 +1,7 @@
 package com.linln.admin.warehouse.controller;
 
 import com.linln.admin.warehouse.domain.WarehouseLocation;
+import com.linln.admin.warehouse.domain.WarehouseLocationExcel;
 import com.linln.admin.warehouse.service.WarehouseLocationService;
 import com.linln.admin.warehouse.validator.WarehouseLocationValid;
 import com.linln.common.enums.StatusEnum;
@@ -8,6 +9,7 @@ import com.linln.common.utils.EntityBeanUtil;
 import com.linln.common.utils.ResultVoUtil;
 import com.linln.common.utils.StatusUtil;
 import com.linln.common.vo.ResultVo;
+import com.linln.component.excel.ExcelUtil;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -17,7 +19,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -138,6 +143,33 @@ public class WarehouseLocationController {
             return ResultVoUtil.success(statusEnum.getMessage() + "成功");
         } else {
             return ResultVoUtil.error(statusEnum.getMessage() + "失败，请重新操作");
+        }
+    }
+
+    /**
+     * 导入库位
+     */
+    @PostMapping("/upload")
+    @ResponseBody
+    public ResultVo uploadImage(@RequestParam("file") MultipartFile multipartFile, HttpServletRequest request) {
+        try {
+            String regionId = request.getParameter("regionId");
+            long parseLong = Long.parseLong(regionId);
+            InputStream inputStream = multipartFile.getInputStream();
+            List<WarehouseLocationExcel> excels = ExcelUtil.importExcel(WarehouseLocationExcel.class, inputStream);
+            for (WarehouseLocationExcel excel : excels) {
+                WarehouseLocation warehouseLocation = warehouseLocationService.checkCodeByRegionId(parseLong, excel.getCode());
+                if (warehouseLocation == null) {
+                    WarehouseLocation location = new WarehouseLocation();
+                    location.setCode(excel.getCode());
+                    location.setRemark(excel.getRemark());
+                    location.setRegionId(parseLong);
+                    warehouseLocationService.save(location);
+                }
+            }
+            return ResultVoUtil.success();
+        } catch (Exception e) {
+            return ResultVoUtil.error("导入库位失败");
         }
     }
 }

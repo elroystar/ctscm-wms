@@ -42,7 +42,7 @@ import java.util.Map;
  */
 public class ExcelUtil {
 
-    private static int dataRow = 2;
+    private static int dataRow = 1;
     private static Cache dictCache = EhCacheUtil.getDictCache();
 
     /**
@@ -91,7 +91,7 @@ public class ExcelUtil {
         XSSFCellStyle thStyle = workbook.createCellStyle();
         thStyle.cloneStyleFrom(titleStyle);
         thStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        thStyle .setFillForegroundColor(IndexedColors.GREY_50_PERCENT.getIndex());
+        thStyle.setFillForegroundColor(IndexedColors.GREY_50_PERCENT.getIndex());
         XSSFFont thFont = workbook.createFont();
         thFont.setFontName(cellStyle.getFont().getFontName());
         thFont.setBold(titleFont.getBold());
@@ -130,7 +130,7 @@ public class ExcelUtil {
         for (Field field : fields) {
             if (field.isAnnotationPresent(Excel.class)) {
                 ExcelType fieldType = field.getAnnotation(Excel.class).type();
-                if(fieldType.equals(ExcelType.ALL) || fieldType.equals(type)){
+                if (fieldType.equals(ExcelType.ALL) || fieldType.equals(type)) {
                     list.add(field);
                 }
             }
@@ -170,14 +170,14 @@ public class ExcelUtil {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if(ros != null){
+            if (ros != null) {
                 try {
                     ros.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            if(workbook != null){
+            if (workbook != null) {
                 try {
                     workbook.close();
                 } catch (IOException e) {
@@ -189,6 +189,7 @@ public class ExcelUtil {
 
     /**
      * 获取Excel模板
+     *
      * @param entity 实体类Class
      */
     public static void genTemplate(Class<?> entity) {
@@ -202,6 +203,7 @@ public class ExcelUtil {
 
     /**
      * 获取Excel模板
+     *
      * @param entity     实体类Class
      * @param sheetTitle 工作组标题（文件名称）
      */
@@ -212,6 +214,7 @@ public class ExcelUtil {
 
     /**
      * 导出Excel数据
+     *
      * @param entity 实体类Class
      * @param list   导出的数据列表
      */
@@ -226,6 +229,7 @@ public class ExcelUtil {
 
     /**
      * 导出Excel数据
+     *
      * @param entity     实体类Class
      * @param list       导出的数据列表
      * @param sheetTitle 工作组标题（文件名称）
@@ -260,9 +264,9 @@ public class ExcelUtil {
                             Excel excel = fields.get(index).getAnnotation(Excel.class);
                             // 字典值转换
                             String dict = excel.dict();
-                            if (!dict.isEmpty()){
+                            if (!dict.isEmpty()) {
                                 Element dictEle = dictCache.get(dict);
-                                if(dictEle != null){
+                                if (dictEle != null) {
                                     @SuppressWarnings("unchecked") Map<String, String> dictValue = (Map<String, String>) dictEle.getObjectValue();
                                     value = dictValue.get(String.valueOf(value));
                                 }
@@ -270,7 +274,7 @@ public class ExcelUtil {
 
                             // 获取关联对象指定的值
                             String joinField = excel.joinField();
-                            if (!joinField.isEmpty()){
+                            if (!joinField.isEmpty()) {
                                 PropertyDescriptor sourcePd = BeanUtils.getPropertyDescriptor(value.getClass(), joinField);
                                 value = sourcePd.getReadMethod().invoke(value, (Object[]) null);
                             }
@@ -302,11 +306,12 @@ public class ExcelUtil {
 
     /**
      * 读取Excel文件数据
-     * @param entity 实体类
+     *
+     * @param entity      实体类
      * @param inputStream Excel文件输入流
      * @return 返回数据集合
      */
-    public static <T> List<T> importExcel(Class<T> entity, InputStream inputStream){
+    public static <T> List<T> importExcel(Class<T> entity, InputStream inputStream) {
         List<T> list = new ArrayList<>();
         List<String> fns = getFieldName(getExcelList(entity, ExcelType.IMPORT));
 
@@ -325,7 +330,7 @@ public class ExcelUtil {
         for (Row row : sheet) {
 
             // 通过非数据行
-            if(count < dataRow ) {
+            if (count < dataRow) {
                 count++;
                 continue;
             }
@@ -335,16 +340,16 @@ public class ExcelUtil {
             String[] rowData = new String[end];
             for (int i = 0; i < end; i++) {
                 Cell cell = row.getCell(i);
-                if(cell != null){
-                    if(cell.getCellType() == CellType.NUMERIC && HSSFDateUtil.isCellDateFormatted(cell)){
+                if (cell != null) {
+                    if (cell.getCellType() == CellType.NUMERIC && HSSFDateUtil.isCellDateFormatted(cell)) {
                         Date date = cell.getDateCellValue();
                         rowData[i] = String.valueOf(date.getTime());
-                    }else {
+                    } else {
                         // 强制其他类型为STRING字符串类型
                         cell.setCellType(CellType.STRING);
                         rowData[i] = cell.getStringCellValue();
                     }
-                }else {
+                } else {
                     rowData[i] = null;
                 }
             }
@@ -356,32 +361,32 @@ public class ExcelUtil {
                 for (final PropertyDescriptor pd : bi.getPropertyDescriptors()) {
                     if (fns.contains(pd.getName())) {
                         Method writeMethod = pd.getWriteMethod();
-                        if(writeMethod != null){
+                        if (writeMethod != null) {
                             if (!Modifier.isPublic(writeMethod.getDeclaringClass().getModifiers())) {
                                 writeMethod.setAccessible(true);
                             }
                             String value = rowData[fns.indexOf(pd.getName())];
-                            if(!StringUtils.isEmpty(value)){
+                            if (!StringUtils.isEmpty(value)) {
                                 Class<?> propertyType = pd.getPropertyType();
-                                if (String.class == propertyType){
+                                if (String.class == propertyType) {
                                     writeMethod.invoke(newInstance, value);
-                                }else if(Integer.class == propertyType){
+                                } else if (Integer.class == propertyType) {
                                     writeMethod.invoke(newInstance, Integer.valueOf(value));
-                                }else if(Long.class == propertyType){
+                                } else if (Long.class == propertyType) {
                                     writeMethod.invoke(newInstance, Double.valueOf(value).longValue());
-                                }else if(Float.class == propertyType){
+                                } else if (Float.class == propertyType) {
                                     writeMethod.invoke(newInstance, Float.valueOf(value));
-                                }else if(Short.class == propertyType){
+                                } else if (Short.class == propertyType) {
                                     writeMethod.invoke(newInstance, Short.valueOf(value));
-                                }else if(Double.class == propertyType){
+                                } else if (Double.class == propertyType) {
                                     writeMethod.invoke(newInstance, Double.valueOf(value));
-                                }else if(Character.class == propertyType){
-                                    if ((value != null) && (value.length() > 0)){
+                                } else if (Character.class == propertyType) {
+                                    if ((value != null) && (value.length() > 0)) {
                                         writeMethod.invoke(newInstance, Character.valueOf(value.charAt(0)));
                                     }
-                                }else if(Date.class == propertyType){
+                                } else if (Date.class == propertyType) {
                                     writeMethod.invoke(newInstance, new Date(Long.parseLong(value)));
-                                }else if(BigDecimal.class == propertyType){
+                                } else if (BigDecimal.class == propertyType) {
                                     writeMethod.invoke(newInstance, new BigDecimal(value));
                                 }
                             }

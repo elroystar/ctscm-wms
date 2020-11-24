@@ -28,6 +28,12 @@ public interface WarehouseLocationService {
     WarehouseLocation getById(Long id);
 
     /**
+     * 根据库区ID查询数据
+     * @param regionId 库区主键ID
+     */
+    WarehouseLocation checkCodeByRegionId(Long regionId, String code);
+
+    /**
      * 保存数据
      * @param warehouseLocation 实体对象
      */

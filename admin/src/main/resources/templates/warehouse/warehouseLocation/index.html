@@ -10,7 +10,7 @@
             <i class="layui-icon layui-icon-refresh refresh-btn"></i>
         </div>
         <div class="layui-card-body">
-            <input hidden id="regionId" value="${regionId}">
+            <input hidden id="regionId" th:attr="value=${regionId}">
             <div class="layui-row timo-card-screen">
                 <div class="pull-left layui-form-pane timo-search-box">
 <!--                    <div class="layui-inline">-->
@@ -38,10 +38,7 @@
                     </div>
                 </div>
                 <div class="pull-right screen-btn-group">
-                    <button type="button" class="layui-btn upload-file" name="file[]"
-                            th:attr="up-url=@{/upload/image}" up-field="path">
-                        <i class="layui-icon">&#xe67c;</i>导入Excel
-                    </button>
+                    <button class="layui-btn upload-file" lay-data="{url: '/warehouse/warehouseLocation/upload/', accept: 'file', exts: 'xlsx'}">导入Excel</button>
                     <button class="layui-btn open-popup" data-title="添加库位管理" th:attr="data-url=@{'/warehouse/warehouseLocation/add/'+${regionId}}" data-size="auto">
                         <i class="fa fa-plus"></i> 添加</button>
 <!--                    <div class="btn-group">-->
