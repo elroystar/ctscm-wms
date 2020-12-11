@@ -383,6 +383,24 @@ layui.use(['element', 'form', 'layer', 'upload'], function () {
         }
     });
 
+    /** 导入明细Excel */
+    upload.render({
+        elem: '.upload-stockin-info' //绑定元素
+        , data: {
+            orderNo: function () {
+                return $('#orderNo').val();
+            }
+        }
+        , done: function (res, index) {
+            debugger;
+            if (res.code == 200) {
+                location.reload();
+            } else {
+                layer.msg(res.msg);
+            }
+        }
+    });
+
     // 删除上传图片展示项
     $(document).on("click", ".upload-item-close", function () {
         $(this).parent('.upload-item').remove();

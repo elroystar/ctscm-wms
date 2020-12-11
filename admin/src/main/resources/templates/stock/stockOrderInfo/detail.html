@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/common/template :: header(~{::title},~{::link},~{::style})">
+</head>
+<body>
+    <div class="timo-detail-page">
+        <div class="timo-detail-title">基本信息</div>
+        <table class="layui-table timo-detail-table">
+            <colgroup>
+                <col width="100px"><col>
+                <col width="100px"><col>
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th>主键ID</th>
+                    <td th:text="${stockOrderInfo.id}"></td>
+                    <th>入库单号</th>
+                    <td th:text="${stockOrderInfo.orderNo}"></td>
+                </tr>
+                <tr>
+                    <th>库区id</th>
+                    <td th:text="${stockOrderInfo.regionId}"></td>
+                    <th>库位id</th>
+                    <td th:text="${stockOrderInfo.locationId}"></td>
+                </tr>
+                <tr>
+                    <th>型号/物料号</th>
+                    <td th:text="${stockOrderInfo.model}"></td>
+                    <th>序列号/SN</th>
+                    <td th:text="${stockOrderInfo.sn}"></td>
+                </tr>
+                <tr>
+                    <th>QTY</th>
+                    <td th:text="${stockOrderInfo.qty}"></td>
+                    <th>入库 DN#</th>
+                    <td th:text="${stockOrderInfo.dn}"></td>
+                </tr>
+                <tr>
+                    <th>PO#</th>
+                    <td th:text="${stockOrderInfo.po}"></td>
+                    <th>SO#</th>
+                    <td th:text="${stockOrderInfo.so}"></td>
+                </tr>
+                <tr>
+                    <th>合同号/批次号</th>
+                    <td th:text="${stockOrderInfo.contractNo}"></td>
+                    <th>生产日期</th>
+                    <td th:text="${stockOrderInfo.productDate}"></td>
+                </tr>
+                <tr>
+                    <th>入库重量/KG</th>
+                    <td th:text="${stockOrderInfo.weight}"></td>
+                    <th>入库体积/CBM</th>
+                    <td th:text="${stockOrderInfo.volume}"></td>
+                </tr>
+                <tr>
+                    <th>商品名称/物料描述</th>
+                    <td th:text="${stockOrderInfo.goodsName}"></td>
+                    <th>产品分类</th>
+                    <td th:text="${stockOrderInfo.productType}"></td>
+                </tr>
+                <tr>
+                    <th>入库供应商</th>
+                    <td th:text="${stockOrderInfo.supplier}"></td>
+                    <th>库位号</th>
+                    <td th:text="${stockOrderInfo.locationNo}"></td>
+                </tr>
+                <tr>
+                    <th>内部号</th>
+                    <td th:text="${stockOrderInfo.internalNo}" colspan="3"></td>
+                </tr>
+                <tr>
+                    <th>创建者</th>
+                    <td th:text="${stockOrderInfo.createBy?.nickname}"></td>
+                    <th>更新者</th>
+                    <td th:text="${stockOrderInfo.updateBy?.nickname}"></td>
+                </tr>
+                <tr>
+                    <th>创建时间</th>
+                    <td th:text="${#dates.format(stockOrderInfo.createDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                    <th>更新时间</th>
+                    <td th:text="${#dates.format(stockOrderInfo.updateDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                </tr>
+                <tr>
+                    <th>备注</th>
+                    <td th:text="${stockOrderInfo.remark}" colspan="3"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+<script th:replace="/common/template :: script"></script>
+</body>
+</html>

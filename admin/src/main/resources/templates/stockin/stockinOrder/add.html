@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/common/template :: header(~{::title},~{::link},~{::style})">
+</head>
+<body>
+    <div class="layui-form timo-compile">
+    <form th:action="@{/stockin/stockinOrder/save}">
+        <input type="hidden" name="id" th:if="${stockinOrder}" th:value="${stockinOrder.id}">
+        <div class="layui-form-item">
+            <label class="layui-form-label">入库单号</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="orderNo" readonly="readonly" th:value="${stockinOrder?.orderNo}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">件数</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="number" placeholder="请输入件数" th:value="${stockinOrder?.number}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">包装请求</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="packageInfo" placeholder="请输入包装请求" th:value="${stockinOrder?.packageInfo}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">入库体积</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="volume" placeholder="请输入入库体积" th:value="${stockinOrder?.volume}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">入库重量</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="weight" placeholder="请输入入库重量" th:value="${stockinOrder?.weight}">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+                <textarea placeholder="请输入内容" class="layui-textarea" name="remark">[[${stockinOrder?.remark}]]</textarea>
+            </div>
+        </div>
+        <div class="layui-form-item timo-finally">
+            <button class="layui-btn ajax-submit"><i class="fa fa-check-circle"></i> 保存</button>
+            <button class="layui-btn btn-secondary close-popup"><i class="fa fa-times-circle"></i> 关闭</button>
+        </div>
+    </form>
+</div>
+<script th:replace="/common/template :: script"></script>
+</body>
+</html>
