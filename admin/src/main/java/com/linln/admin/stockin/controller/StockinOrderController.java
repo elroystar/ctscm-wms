@@ -76,6 +76,7 @@ public class StockinOrderController {
 
         StockinOrderInfo stockinOrderInfo = new StockinOrderInfo();
         stockinOrderInfo.setOrderNo(orderNo);
+        stockinOrderInfo.setStatus(null);
 
         // 创建匹配器，进行动态查询匹配
         ExampleMatcher matcher = ExampleMatcher.matching();

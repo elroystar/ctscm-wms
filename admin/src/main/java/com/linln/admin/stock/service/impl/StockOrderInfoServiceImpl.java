@@ -63,4 +63,9 @@ public class StockOrderInfoServiceImpl implements StockOrderInfoService {
     public Boolean updateStatus(StatusEnum statusEnum, List<Long> idList) {
         return stockOrderInfoRepository.updateStatus(statusEnum.getCode(), idList) > 0;
     }
+
+    @Override
+    public Integer checkSn(String sn) {
+        return stockOrderInfoRepository.checkSn(sn);
+    }
 }

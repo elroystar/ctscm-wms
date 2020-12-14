@@ -38,4 +38,6 @@ public interface StockoutOrderInfoService {
      */
     @Transactional
     Boolean updateStatus(StatusEnum statusEnum, List<Long> idList);
+
+    Integer checkSn(String sn);
 }

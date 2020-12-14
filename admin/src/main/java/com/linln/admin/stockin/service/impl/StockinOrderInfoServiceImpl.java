@@ -1,10 +1,13 @@
 package com.linln.admin.stockin.service.impl;
 
+import com.linln.admin.stock.domain.StockOrderInfo;
+import com.linln.admin.stock.repository.StockOrderInfoRepository;
 import com.linln.admin.stockin.domain.StockinOrderInfo;
 import com.linln.admin.stockin.repository.StockinOrderInfoRepository;
 import com.linln.admin.stockin.service.StockinOrderInfoService;
 import com.linln.common.data.PageSort;
 import com.linln.common.enums.StatusEnum;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -24,8 +27,12 @@ public class StockinOrderInfoServiceImpl implements StockinOrderInfoService {
     @Autowired
     private StockinOrderInfoRepository stockinOrderInfoRepository;
 
+    @Autowired
+    private StockOrderInfoRepository stockOrderInfoRepository;
+
     /**
      * 根据ID查询数据
+     *
      * @param id 主键ID
      */
     @Override
@@ -36,6 +43,7 @@ public class StockinOrderInfoServiceImpl implements StockinOrderInfoService {
 
     /**
      * 获取分页列表数据
+     *
      * @param example 查询实例
      * @return 返回分页数据
      */
@@ -48,6 +56,7 @@ public class StockinOrderInfoServiceImpl implements StockinOrderInfoService {
 
     /**
      * 保存数据
+     *
      * @param stockinOrderInfo 实体对象
      */
     @Override
@@ -62,5 +71,30 @@ public class StockinOrderInfoServiceImpl implements StockinOrderInfoService {
     @Transactional
     public Boolean updateStatus(StatusEnum statusEnum, List<Long> idList) {
         return stockinOrderInfoRepository.updateStatus(statusEnum.getCode(), idList) > 0;
+    }
+
+    @Override
+    @Transactional
+    public Boolean updateOrderInfoStatusById(String status, Long id) {
+        return stockinOrderInfoRepository.updateOrderInfoStatusById(status, id) > 0;
+    }
+
+    @Override
+    public Integer checkSn(String sn) {
+        return stockinOrderInfoRepository.checkSn(sn);
+    }
+
+    @Override
+    @Transactional
+    public void putInStorage(StockinOrderInfo byId) {
+        stockinOrderInfoRepository.deleteById(byId.getId());
+        StockOrderInfo orderInfo = new StockOrderInfo();
+        BeanUtils.copyProperties(byId, orderInfo);
+        stockOrderInfoRepository.save(orderInfo);
+    }
+
+    @Override
+    public Integer checkNumByOrderNo(String orderNo) {
+        return stockinOrderInfoRepository.checkNumByOrderNo(orderNo);
     }
 }

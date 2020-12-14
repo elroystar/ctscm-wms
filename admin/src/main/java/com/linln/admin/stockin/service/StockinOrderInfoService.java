@@ -38,4 +38,14 @@ public interface StockinOrderInfoService {
      */
     @Transactional
     Boolean updateStatus(StatusEnum statusEnum, List<Long> idList);
+
+    @Transactional
+    Boolean updateOrderInfoStatusById(String status, Long id);
+
+    Integer checkSn(String sn);
+
+    @Transactional
+    void putInStorage(StockinOrderInfo byId);
+
+    Integer checkNumByOrderNo(String orderNo);
 }

@@ -1,15 +1,19 @@
 package com.linln.admin.stockin.controller;
 
+import com.linln.admin.stock.service.StockOrderInfoService;
 import com.linln.admin.stockin.domain.StockinOrderInfo;
 import com.linln.admin.stockin.domain.StockinOrderInfoExcel;
 import com.linln.admin.stockin.service.StockinOrderInfoService;
+import com.linln.admin.stockin.service.StockinOrderService;
 import com.linln.admin.stockin.validator.StockinOrderInfoValid;
-import com.linln.common.enums.StatusEnum;
+import com.linln.admin.stockout.service.StockoutOrderInfoService;
+import com.linln.common.enums.OrderInfoStatusEnum;
+import com.linln.common.enums.OrderStatusEnum;
 import com.linln.common.utils.EntityBeanUtil;
 import com.linln.common.utils.ResultVoUtil;
-import com.linln.common.utils.StatusUtil;
 import com.linln.common.vo.ResultVo;
 import com.linln.component.excel.ExcelUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -35,7 +40,16 @@ import java.util.List;
 public class StockinOrderInfoController {
 
     @Autowired
+    private StockinOrderService stockinOrderService;
+
+    @Autowired
     private StockinOrderInfoService stockinOrderInfoService;
+
+    @Autowired
+    private StockOrderInfoService stockOrderInfoService;
+
+    @Autowired
+    private StockoutOrderInfoService stockoutOrderInfoService;
 
     /**
      * 列表页面
@@ -115,13 +129,35 @@ public class StockinOrderInfoController {
     public ResultVo status(
             @PathVariable("param") String param,
             @RequestParam(value = "ids", required = false) List<Long> ids) {
-        // 更新状态
-        StatusEnum statusEnum = StatusUtil.getStatusEnum(param);
-        if (stockinOrderInfoService.updateStatus(statusEnum, ids)) {
-            return ResultVoUtil.success(statusEnum.getMessage() + "成功");
+        if ("submit".equals(param)) {
+            String orderNo = null;
+            // 明细入库
+            for (long id : ids) {
+                StockinOrderInfo byId = stockinOrderInfoService.getById(id);
+                if (!byId.getStatus().equals(OrderInfoStatusEnum.CHECKED.getMessage())) {
+                    return ResultVoUtil.error("失败，存在未过检数据");
+                }
+                orderNo = byId.getOrderNo();
+                stockinOrderInfoService.putInStorage(byId);
+            }
+            // 修改订单状态
+            if (stockinOrderInfoService.checkNumByOrderNo(orderNo) > 0) {
+                stockinOrderService.updateStatusByOrderNo(OrderStatusEnum.PART.getCode(), orderNo);
+            } else {
+                stockinOrderService.updateStatusByOrderNo(OrderStatusEnum.ALL.getCode(), orderNo);
+            }
+            return ResultVoUtil.success("成功");
+        } else if ("check".equals(param)) {
+            for (Long id : ids) {
+                StockinOrderInfo byId = stockinOrderInfoService.getById(id);
+                String status = checkOrderStatus(byId, Boolean.TRUE);
+                stockinOrderInfoService.updateOrderInfoStatusById(status, id);
+            }
+            return ResultVoUtil.success("检验成功");
         } else {
-            return ResultVoUtil.error(statusEnum.getMessage() + "失败，请重新操作");
+            return ResultVoUtil.error("失败，请重新操作");
         }
+
     }
 
     /**
@@ -138,11 +174,51 @@ public class StockinOrderInfoController {
                 StockinOrderInfo orderInfo = new StockinOrderInfo();
                 BeanUtils.copyProperties(orderInfoExcel, orderInfo);
                 orderInfo.setOrderNo(orderNo);
+                checkOrderStatus(orderInfo, Boolean.FALSE);
                 stockinOrderInfoService.save(orderInfo);
             }
             return ResultVoUtil.success();
         } catch (Exception e) {
             return ResultVoUtil.error("导入库位失败");
         }
+    }
+
+    private String checkOrderStatus(StockinOrderInfo orderInfo, Boolean isRechecked) {
+        String status = OrderInfoStatusEnum.UNCHECKED.getMessage();
+        String sn = orderInfo.getSn();
+        if (isRechecked) {
+            if (StringUtils.isBlank(orderInfo.getRemark())) {
+                status = status + ",复检“入库备注”字段为必填项";
+            }
+        }
+        if (StringUtils.isBlank(orderInfo.getModel())) {
+            status = status + ",型号/物料号不能为空";
+        }
+        if (null == orderInfo.getQty() && orderInfo.getQty() <= 0) {
+            status = status + ",QTY不能为空";
+        }
+        if (null == orderInfo.getWeight() || orderInfo.getWeight().compareTo(BigDecimal.ZERO) <= 0) {
+            status = status + ",入库重量不能为空";
+        }
+        if (null == orderInfo.getVolume() || orderInfo.getVolume().compareTo(BigDecimal.ZERO) <= 0) {
+            status = status + ",入库体积不能为空";
+        }
+        if (StringUtils.isBlank(orderInfo.getSupplier())) {
+            status = status + ",入库供应商不能为空";
+        }
+        if (StringUtils.isBlank(orderInfo.getLocationNo())) {
+            status = status + ",库位号不能为空";
+        }
+        if (stockOrderInfoService.checkSn(sn) == 1) {
+            status = OrderInfoStatusEnum.UNCHECKED.getMessage() + ",与库存序列号重复";
+        }
+        if (stockoutOrderInfoService.checkSn(sn) == 1) {
+            status = OrderInfoStatusEnum.UNCHECKED.getMessage() + ",已出库货物序列号重复";
+        }
+        if (!status.contains(",")) {
+            status = OrderInfoStatusEnum.CHECKED.getMessage();
+        }
+        orderInfo.setStatus(status);
+        return status;
     }
 }

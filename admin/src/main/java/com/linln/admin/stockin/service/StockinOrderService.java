@@ -40,4 +40,6 @@ public interface StockinOrderService {
     Boolean updateStatus(StatusEnum statusEnum, List<Long> idList);
 
     Integer getCountNow();
+
+    void updateStatusByOrderNo(String code, String orderNo);
 }

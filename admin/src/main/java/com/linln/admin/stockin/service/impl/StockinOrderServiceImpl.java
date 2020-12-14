@@ -68,4 +68,9 @@ public class StockinOrderServiceImpl implements StockinOrderService {
     public Integer getCountNow() {
         return stockinOrderRepository.getCountNow();
     }
+
+    @Override
+    public void updateStatusByOrderNo(String code, String orderNo) {
+        stockinOrderRepository.updateStatusByOrderNo(code, orderNo);
+    }
 }

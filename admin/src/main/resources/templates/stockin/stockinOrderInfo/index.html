@@ -13,20 +13,32 @@
             <input hidden id="orderNo" th:attr="value=${orderNo}">
             <div class="layui-row timo-card-screen">
                 <div class="pull-left layui-form-pane timo-search-box">
-                    <div class="layui-inline">
-                        <label class="layui-form-label">状态</label>
-                        <div class="layui-input-block timo-search-status">
-                            <select class="timo-search-select" name="status" mo:dict="SEARCH_STATUS" mo-selected="${param.status}"></select>
-                        </div>
-                    </div>
+<!--                    <div class="layui-inline">-->
+<!--                        <label class="layui-form-label">状态</label>-->
+<!--                        <div class="layui-input-block timo-search-status">-->
+<!--                            <select class="timo-search-select" name="status" mo:dict="SEARCH_STATUS" mo-selected="${param.status}"></select>-->
+<!--                        </div>-->
+<!--                    </div>-->
                     <div class="layui-inline">
                         <label class="layui-form-label">入库单号</label>
                         <div class="layui-input-block">
                             <input type="text" name="orderNo" th:value="${param.orderNo}" placeholder="请输入入库单号" autocomplete="off" class="layui-input">
                         </div>
                     </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn timo-search-btn">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="pull-right screen-btn-group">
+                    <div class="btn-group">
+                        <button class="layui-btn">操作<span class="caret"></span></button>
+                        <dl class="layui-nav-child layui-anim layui-anim-upbit">
+                            <dd><a class="ajax-status" th:href="@{/stockin/stockinOrderInfo/status/submit}">提交</a></dd>
+                            <dd><a class="ajax-status" th:href="@{/stockin/stockinOrderInfo/status/check}">校验</a></dd>
+                        </dl>
+                    </div>
                     <button class="layui-btn open-popup" data-title="添加添加明细" th:attr="data-url=@{/stockin/stockinOrderInfo/add}" data-size="auto">
                         <i class="fa fa-plus"></i> 手K</button>
                     <button class="layui-btn upload-stockin-info" lay-data="{url: '/stockin/stockinOrderInfo/upload/', accept: 'file', exts: 'xlsx'}">导入Excel</button>
@@ -55,6 +67,7 @@
                         <th>入库供应商</th>
                         <th>库位号</th>
                         <th>内部号</th>
+                        <th>状态</th>
                         <th>备注</th>
                         <th>操作</th>
                     </tr>
@@ -78,6 +91,7 @@
                         <td th:text="${item.supplier}">入库供应商</td>
                         <td th:text="${item.locationNo}">库位号</td>
                         <td th:text="${item.internalNo}">内部号</td>
+                        <td th:text="${item.status}">状态</td>
                         <td th:text="${item.remark}">备注</td>
                         <td>
                             <a class="open-popup" data-title="编辑添加明细" th:attr="data-url=@{'/stockin/stockinOrderInfo/edit/'+${item.id}}" data-size="auto" href="#">编辑</a>

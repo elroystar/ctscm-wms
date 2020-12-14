@@ -6,19 +6,19 @@
     <div class="layui-form timo-compile">
     <form th:action="@{/stockin/stockinOrderInfo/save}">
         <input type="hidden" name="id" th:if="${stockinOrderInfo}" th:value="${stockinOrderInfo.id}">
-        <div class="layui-form-item">
+        <div class="layui-form-item" hidden="hidden">
             <label class="layui-form-label">入库单号</label>
             <div class="layui-input-inline">
                 <input class="layui-input" type="text" name="orderNo" placeholder="请输入入库单号" th:value="${stockinOrderInfo?.orderNo}">
             </div>
         </div>
-        <div class="layui-form-item">
+        <div class="layui-form-item" hidden="hidden">
             <label class="layui-form-label">库区id</label>
             <div class="layui-input-inline">
                 <input class="layui-input" type="text" name="regionId" placeholder="请输入库区id" th:value="${stockinOrderInfo?.regionId}">
             </div>
         </div>
-        <div class="layui-form-item">
+        <div class="layui-form-item" hidden="hidden">
             <label class="layui-form-label">库位id</label>
             <div class="layui-input-inline">
                 <input class="layui-input" type="text" name="locationId" placeholder="请输入库位id" th:value="${stockinOrderInfo?.locationId}">
