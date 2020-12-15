@@ -10,6 +10,9 @@ import com.linln.common.utils.EntityBeanUtil;
 import com.linln.common.utils.ResultVoUtil;
 import com.linln.common.utils.StatusUtil;
 import com.linln.common.vo.ResultVo;
+import com.linln.component.shiro.ShiroUtil;
+import com.linln.modules.system.domain.Role;
+import com.linln.modules.system.domain.User;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -21,6 +24,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author star
@@ -134,5 +138,17 @@ public class WarehouseRegionController {
         } else {
             return ResultVoUtil.error(statusEnum.getMessage() + "失败，请重新操作");
         }
+    }
+
+    /**
+     * 跳转到编辑页面
+     */
+    @GetMapping("/getUserRegion")
+    @ResponseBody
+    public List<WarehouseRegion> getUserRegion() {
+        User subject = ShiroUtil.getSubject();
+        Set<Role> subjectRoles = ShiroUtil.getSubjectRoles();
+        List<WarehouseRegion> all = warehouseRegionService.findAll();
+        return all;
     }
 }

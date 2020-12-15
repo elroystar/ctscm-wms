@@ -63,4 +63,9 @@ public class WarehouseRegionServiceImpl implements WarehouseRegionService {
     public Boolean updateStatus(StatusEnum statusEnum, List<Long> idList) {
         return warehouseRegionRepository.updateStatus(statusEnum.getCode(), idList) > 0;
     }
+
+    @Override
+    public List<WarehouseRegion> findAll() {
+        return warehouseRegionRepository.findAll();
+    }
 }

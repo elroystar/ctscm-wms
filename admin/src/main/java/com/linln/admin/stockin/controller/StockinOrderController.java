@@ -5,9 +5,12 @@ import com.linln.admin.stockin.domain.StockinOrderInfo;
 import com.linln.admin.stockin.service.StockinOrderInfoService;
 import com.linln.admin.stockin.service.StockinOrderService;
 import com.linln.admin.stockin.validator.StockinOrderValid;
+import com.linln.admin.warehouse.domain.WarehouseRegion;
+import com.linln.admin.warehouse.service.WarehouseRegionService;
 import com.linln.common.enums.OrderStatusEnum;
 import com.linln.common.enums.StatusEnum;
 import com.linln.common.utils.EntityBeanUtil;
+import com.linln.common.utils.MapToolsUtil;
 import com.linln.common.utils.ResultVoUtil;
 import com.linln.common.utils.StatusUtil;
 import com.linln.common.vo.ResultVo;
@@ -21,10 +24,14 @@ import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author 小懒虫
@@ -41,6 +48,9 @@ public class StockinOrderController {
 
     @Autowired
     private StockinOrderInfoService stockinOrderInfoService;
+
+    @Autowired
+    private WarehouseRegionService warehouseRegionService;
 
     /**
      * 列表页面
@@ -72,9 +82,17 @@ public class StockinOrderController {
      */
     @GetMapping("/addInfo/{orderNo}")
     @RequiresPermissions("stockin:stockinOrderInfo:index")
-    public String addInfo(@PathVariable("orderNo") String orderNo, Model model) {
+    public String addInfo(@PathVariable("orderNo") String orderNo, Model model, HttpServletRequest request) {
 
-        StockinOrderInfo stockinOrderInfo = new StockinOrderInfo();
+        // 获取请求参数
+        Enumeration<String> parameterNames = request.getParameterNames();
+        Map<String, String> reqMap = new HashMap<>();
+        while (parameterNames.hasMoreElements()) {
+            String name = parameterNames.nextElement();
+            String value = request.getParameter(name);
+            reqMap.put(name, value);
+        }
+        StockinOrderInfo stockinOrderInfo = (StockinOrderInfo) MapToolsUtil.mapJavaBean(StockinOrderInfo.class, reqMap);
         stockinOrderInfo.setOrderNo(orderNo);
         stockinOrderInfo.setStatus(null);
 
@@ -89,6 +107,9 @@ public class StockinOrderController {
         model.addAttribute("list", list.getContent());
         model.addAttribute("page", list);
         model.addAttribute("orderNo", orderNo);
+        List<WarehouseRegion> all = warehouseRegionService.findAll();
+        long regionId = all.get(0).getId();
+        model.addAttribute("regionId", regionId);
 
         return "/stockin/stockinOrderInfo/index";
     }

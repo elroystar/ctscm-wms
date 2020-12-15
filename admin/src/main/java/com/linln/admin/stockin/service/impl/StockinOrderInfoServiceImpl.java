@@ -97,4 +97,9 @@ public class StockinOrderInfoServiceImpl implements StockinOrderInfoService {
     public Integer checkNumByOrderNo(String orderNo) {
         return stockinOrderInfoRepository.checkNumByOrderNo(orderNo);
     }
+
+    @Override
+    public void deleteById(long id) {
+        stockinOrderInfoRepository.deleteById(id);
+    }
 }

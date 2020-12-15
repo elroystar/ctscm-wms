@@ -81,6 +81,19 @@ public class StockinOrderInfoController {
     }
 
     /**
+     * 跳转到添加页面
+     */
+    @GetMapping("/add/{orderNo}/{regionId}")
+    @RequiresPermissions("stockin:stockinOrderInfo:add")
+    public String toAdd(@PathVariable("orderNo") String orderNo, @PathVariable("regionId") String regionId, Model model) {
+        StockinOrderInfo stockinOrderInfo = new StockinOrderInfo();
+        stockinOrderInfo.setOrderNo(orderNo);
+        stockinOrderInfo.setRegionId(regionId);
+        model.addAttribute("stockinOrderInfo", stockinOrderInfo);
+        return "/stockin/stockinOrderInfo/add";
+    }
+
+    /**
      * 跳转到编辑页面
      */
     @GetMapping("/edit/{id}")
@@ -154,6 +167,11 @@ public class StockinOrderInfoController {
                 stockinOrderInfoService.updateOrderInfoStatusById(status, id);
             }
             return ResultVoUtil.success("检验成功");
+        } else if ("delete".equals(param)) {
+            for (long id : ids) {
+                stockinOrderInfoService.deleteById(id);
+            }
+            return ResultVoUtil.success("删除成功");
         } else {
             return ResultVoUtil.error("失败，请重新操作");
         }
@@ -168,12 +186,14 @@ public class StockinOrderInfoController {
     public ResultVo uploadImage(@RequestParam("file") MultipartFile multipartFile, HttpServletRequest request) {
         try {
             String orderNo = request.getParameter("orderNo");
+            String regionId = request.getParameter("regionId");
             InputStream inputStream = multipartFile.getInputStream();
             List<StockinOrderInfoExcel> orderInfoExcels = ExcelUtil.importExcel(StockinOrderInfoExcel.class, inputStream);
             for (StockinOrderInfoExcel orderInfoExcel : orderInfoExcels) {
                 StockinOrderInfo orderInfo = new StockinOrderInfo();
                 BeanUtils.copyProperties(orderInfoExcel, orderInfo);
                 orderInfo.setOrderNo(orderNo);
+                orderInfo.setRegionId(regionId);
                 checkOrderStatus(orderInfo, Boolean.FALSE);
                 stockinOrderInfoService.save(orderInfo);
             }
@@ -213,7 +233,7 @@ public class StockinOrderInfoController {
             status = OrderInfoStatusEnum.UNCHECKED.getMessage() + ",与库存序列号重复";
         }
         if (stockoutOrderInfoService.checkSn(sn) == 1) {
-            status = OrderInfoStatusEnum.UNCHECKED.getMessage() + ",已出库货物序列号重复";
+            status = OrderInfoStatusEnum.UNCHECKED.getMessage() + ",与已出库货物序列号重复";
         }
         if (!status.contains(",")) {
             status = OrderInfoStatusEnum.CHECKED.getMessage();

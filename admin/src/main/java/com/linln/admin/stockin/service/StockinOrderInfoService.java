@@ -48,4 +48,6 @@ public interface StockinOrderInfoService {
     void putInStorage(StockinOrderInfo byId);
 
     Integer checkNumByOrderNo(String orderNo);
+
+    void deleteById(long id);
 }

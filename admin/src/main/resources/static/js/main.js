@@ -390,6 +390,9 @@ layui.use(['element', 'form', 'layer', 'upload'], function () {
             orderNo: function () {
                 return $('#orderNo').val();
             }
+            ,regionId: function () {
+                return $('#regionId').val();
+            }
         }
         , done: function (res, index) {
             debugger;
@@ -405,5 +408,4 @@ layui.use(['element', 'form', 'layer', 'upload'], function () {
     $(document).on("click", ".upload-item-close", function () {
         $(this).parent('.upload-item').remove();
     });
-
 });

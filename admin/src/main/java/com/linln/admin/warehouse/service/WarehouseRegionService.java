@@ -38,4 +38,6 @@ public interface WarehouseRegionService {
      */
     @Transactional
     Boolean updateStatus(StatusEnum statusEnum, List<Long> idList);
+
+    List<WarehouseRegion> findAll();
 }
