@@ -49,7 +49,8 @@
             </div>
             <div class="pull-right screen-btn-group">
                 <button class="layui-btn open-popup" data-title="添加明细"
-                        th:attr="data-url=@{'/stockin/stockinOrderInfo/add/'+${orderNo}+'/'+${regionId}}" data-size="auto">
+                        th:attr="data-url=@{'/stockin/stockinOrderInfo/add/'+${orderNo}+'/'+${regionId}}"
+                        data-size="auto">
                     <i class="fa fa-plus"></i> 手K
                 </button>
                 <button class="layui-btn upload-stockin-info"
@@ -122,7 +123,7 @@
 <script th:replace="/common/template :: script"></script>
 <script type="text/javascript" th:src="@{/js/plugins/jquery-2.2.4.min.js}"></script>
 <script>
-    $(document).ready(function(){
+    $(document).ready(function () {
         v = {};
         $.ajax({
             type: 'get',
@@ -136,8 +137,13 @@
         });
         var data = JSON.parse(JSON.stringify(v));
         var select = $("#regionId");
+        var regionId = getQueryVariable("regionId");
         $.each(data, function (k, v) {
-            select.append("<option value ='" + k + "'>" + v + "</option>");
+            if (regionId == k) {
+                select.append("<option selected value ='" + k + "'>" + v + "</option>");
+            } else {
+                select.append("<option value ='" + k + "'>" + v + "</option>");
+            }
         });
     });
 </script>
