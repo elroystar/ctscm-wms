@@ -2,11 +2,13 @@ package com.linln.admin.stockin.controller;
 
 import com.linln.admin.stockin.domain.StockinOrder;
 import com.linln.admin.stockin.domain.StockinOrderInfo;
+import com.linln.admin.stockin.domain.StockinOrderInfoExcel;
 import com.linln.admin.stockin.service.StockinOrderInfoService;
 import com.linln.admin.stockin.service.StockinOrderService;
 import com.linln.admin.stockin.validator.StockinOrderValid;
 import com.linln.admin.warehouse.domain.WarehouseRegion;
 import com.linln.admin.warehouse.service.WarehouseRegionService;
+import com.linln.common.enums.OrderInfoStatusEnum;
 import com.linln.common.enums.OrderStatusEnum;
 import com.linln.common.enums.StatusEnum;
 import com.linln.common.utils.EntityBeanUtil;
@@ -14,7 +16,10 @@ import com.linln.common.utils.MapToolsUtil;
 import com.linln.common.utils.ResultVoUtil;
 import com.linln.common.utils.StatusUtil;
 import com.linln.common.vo.ResultVo;
+import com.linln.component.excel.ExcelUtil;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -94,7 +99,47 @@ public class StockinOrderController {
         }
         StockinOrderInfo stockinOrderInfo = (StockinOrderInfo) MapToolsUtil.mapJavaBean(StockinOrderInfo.class, reqMap);
         stockinOrderInfo.setOrderNo(orderNo);
-        stockinOrderInfo.setStatus(null);
+        stockinOrderInfo.setStatus("检");
+
+        // 创建匹配器，进行动态查询匹配
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withMatcher("status", genericPropertyMatcher -> genericPropertyMatcher.contains());
+
+        // 获取数据列表
+        Example<StockinOrderInfo> example = Example.of(stockinOrderInfo, matcher);
+        Page<StockinOrderInfo> list = stockinOrderInfoService.getPageList(example);
+
+        // 封装数据
+        model.addAttribute("list", list.getContent());
+        model.addAttribute("page", list);
+        model.addAttribute("orderNo", orderNo);
+        List<WarehouseRegion> all = warehouseRegionService.findAll();
+        long regionId = all.get(0).getId();
+        model.addAttribute("regionId", regionId);
+
+        return "/stockin/stockinOrderInfo/index";
+    }
+
+    /**
+     * 跳转到查询明细页面
+     */
+    @GetMapping("/getInfo/{orderId}")
+    @RequiresPermissions("stockin:stockinOrderInfo:index")
+    public String getInfo(@PathVariable("orderId") Long orderId, Model model, HttpServletRequest request) {
+
+        StockinOrder byId = stockinOrderService.getById(orderId);
+        String orderNo = byId.getOrderNo();
+        // 获取请求参数
+        Enumeration<String> parameterNames = request.getParameterNames();
+        Map<String, String> reqMap = new HashMap<>();
+        while (parameterNames.hasMoreElements()) {
+            String name = parameterNames.nextElement();
+            String value = request.getParameter(name);
+            reqMap.put(name, value);
+        }
+        StockinOrderInfo stockinOrderInfo = (StockinOrderInfo) MapToolsUtil.mapJavaBean(StockinOrderInfo.class, reqMap);
+        stockinOrderInfo.setOrderNo(orderNo);
+        stockinOrderInfo.setStatus(OrderInfoStatusEnum.WAREHOUSING.getCode());
 
         // 创建匹配器，进行动态查询匹配
         ExampleMatcher matcher = ExampleMatcher.matching();
@@ -111,7 +156,35 @@ public class StockinOrderController {
         long regionId = all.get(0).getId();
         model.addAttribute("regionId", regionId);
 
-        return "/stockin/stockinOrderInfo/index";
+        return "/stockin/stockinAlreadyOrderInfo/index";
+    }
+
+    /**
+     * 导出明细
+     */
+    @GetMapping("/exportOrderInfo/{orderId}")
+    @ResponseBody
+    public void exportOrderInfo(@PathVariable("orderId") Long orderId) {
+
+        StockinOrder byId = stockinOrderService.getById(orderId);
+        String orderNo = byId.getOrderNo();
+        // 查询赋值
+        StockinOrderInfo stockinOrderInfo = new StockinOrderInfo();
+        stockinOrderInfo.setOrderNo(orderNo);
+        stockinOrderInfo.setStatus(OrderInfoStatusEnum.WAREHOUSING.getCode());
+        // 创建匹配器，进行动态查询匹配
+        ExampleMatcher matcher = ExampleMatcher.matching();
+        // 获取数据列表
+        Example<StockinOrderInfo> example = Example.of(stockinOrderInfo, matcher);
+        List<StockinOrderInfo> allByOrderNo = stockinOrderInfoService.getAllByOrderNo(example);
+        List<StockinOrderInfoExcel> orderInfoExcels = Lists.newArrayList();
+        for (StockinOrderInfo orderInfo : allByOrderNo) {
+            StockinOrderInfoExcel orderInfoExcel = new StockinOrderInfoExcel();
+            BeanUtils.copyProperties(orderInfo, orderInfoExcel);
+            orderInfoExcels.add(orderInfoExcel);
+        }
+        // 导出Excel
+        ExcelUtil.exportExcel(StockinOrderInfoExcel.class, orderInfoExcels);
     }
 
     /**

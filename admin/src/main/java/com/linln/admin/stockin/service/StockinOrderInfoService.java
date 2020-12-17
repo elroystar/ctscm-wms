@@ -4,6 +4,7 @@ import com.linln.admin.stockin.domain.StockinOrderInfo;
 import com.linln.common.enums.StatusEnum;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -50,4 +51,8 @@ public interface StockinOrderInfoService {
     Integer checkNumByOrderNo(String orderNo);
 
     void deleteById(long id);
+
+    List<StockinOrderInfo> getAllByOrderNo(Example<StockinOrderInfo> example);
+
+    Page<StockinOrderInfo> getPageList(Specification<StockinOrderInfo> of);
 }

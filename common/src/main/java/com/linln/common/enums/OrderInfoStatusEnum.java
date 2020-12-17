@@ -11,6 +11,10 @@ import lombok.Getter;
 public enum OrderInfoStatusEnum {
 
     /**
+     * 已入库
+     */
+    WAREHOUSING("warehousing", "已入库"),
+    /**
      * 未过检
      */
     UNCHECKED("unchecked", "未过检"),

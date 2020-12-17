@@ -6,12 +6,14 @@ import com.linln.admin.stockin.domain.StockinOrderInfo;
 import com.linln.admin.stockin.repository.StockinOrderInfoRepository;
 import com.linln.admin.stockin.service.StockinOrderInfoService;
 import com.linln.common.data.PageSort;
+import com.linln.common.enums.OrderInfoStatusEnum;
 import com.linln.common.enums.StatusEnum;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,6 +56,13 @@ public class StockinOrderInfoServiceImpl implements StockinOrderInfoService {
         return stockinOrderInfoRepository.findAll(example, page);
     }
 
+    @Override
+    public Page<StockinOrderInfo> getPageList(Specification<StockinOrderInfo> of) {
+        // 创建分页对象
+        PageRequest page = PageSort.pageRequest();
+        return stockinOrderInfoRepository.findAll(of, page);
+    }
+
     /**
      * 保存数据
      *
@@ -87,7 +96,7 @@ public class StockinOrderInfoServiceImpl implements StockinOrderInfoService {
     @Override
     @Transactional
     public void putInStorage(StockinOrderInfo byId) {
-        stockinOrderInfoRepository.deleteById(byId.getId());
+        stockinOrderInfoRepository.updateOrderInfoStatusById(OrderInfoStatusEnum.WAREHOUSING.getCode(), byId.getId());
         StockOrderInfo orderInfo = new StockOrderInfo();
         BeanUtils.copyProperties(byId, orderInfo);
         stockOrderInfoRepository.save(orderInfo);
@@ -101,5 +110,10 @@ public class StockinOrderInfoServiceImpl implements StockinOrderInfoService {
     @Override
     public void deleteById(long id) {
         stockinOrderInfoRepository.deleteById(id);
+    }
+
+    @Override
+    public List<StockinOrderInfo> getAllByOrderNo(Example<StockinOrderInfo> example) {
+        return stockinOrderInfoRepository.findAll(example);
     }
 }
