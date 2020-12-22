@@ -16,6 +16,7 @@ public interface StockOrderInfoService {
 
     /**
      * 获取分页列表数据
+     *
      * @param example 查询实例
      * @return 返回分页数据
      */
@@ -23,12 +24,14 @@ public interface StockOrderInfoService {
 
     /**
      * 根据ID查询数据
+     *
      * @param id 主键ID
      */
     StockOrderInfo getById(Long id);
 
     /**
      * 保存数据
+     *
      * @param stockOrderInfo 实体对象
      */
     StockOrderInfo save(StockOrderInfo stockOrderInfo);
@@ -40,4 +43,8 @@ public interface StockOrderInfoService {
     Boolean updateStatus(StatusEnum statusEnum, List<Long> idList);
 
     Integer checkSn(String sn);
+
+    void deleteById(Long id);
+
+    void updateQtyById(Integer surQty, Long orderId);
 }

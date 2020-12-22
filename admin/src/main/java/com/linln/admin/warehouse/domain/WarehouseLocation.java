@@ -68,4 +68,6 @@ public class WarehouseLocation implements Serializable {
     private String code;
     // 库区表Id
     private Long regionId;
+    // 库区名称
+    private String regionName;
 }

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/common/template :: header(~{::title},~{::link},~{::style})">
+</head>
+<body class="timo-layout-page">
+<div class="layui-card">
+    <div class="layui-card-header timo-card-header">
+        <span><i class="fa fa-bars"></i> 库位管理管理</span>
+        <i class="layui-icon layui-icon-refresh refresh-btn"></i>
+    </div>
+    <div class="layui-card-body">
+        <input hidden id="orderId" th:attr="value=${orderId}">
+        <div class="layui-row timo-card-screen">
+            <div class="pull-left layui-form-pane timo-search-box">
+                <div class="layui-inline">
+                    <label class="layui-form-label">入库DO#：</label>
+                    <label class="layui-form-label" th:text="${stockOrderInfo.dn}"></label>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">序列号：</label>
+                    <label class="layui-form-label" th:text="${stockOrderInfo.sn}"></label>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">QTY：</label>
+                    <label class="layui-form-label" th:text="${stockOrderInfo.qty}"></label>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">原库位：</label>
+                    <label class="layui-form-label" th:text="${stockOrderInfo.locationNo}"></label>
+                </div>
+                <br/>
+                <div class="layui-inline">
+                    <label class="layui-form-label">调拨数量</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="allocationNum" id="allocationNum" placeholder="请输调拨数量"
+                               autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn" data-size="auto" id="allocationSubmit">
+                        <i class="fa fa-suitcase"></i> 提交
+                    </button>
+                </div>
+                <br/>
+                <div class="layui-inline">
+                    <label class="layui-form-label">库位编码</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="code" th:value="${param.code}" placeholder="请输入库位编码" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn timo-search-btn">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="timo-table-wrap">
+            <table class="layui-table timo-table">
+                <thead>
+                <tr>
+                    <th class="timo-table-checkbox">
+                        <label class="timo-checkbox"><input type="checkbox">
+                            <i class="layui-icon layui-icon-ok"></i></label>
+                    </th>
+                    <th>库区名称</th>
+                    <th>库位编码</th>
+                    <th>备注</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item:${list}">
+                    <td><label class="timo-checkbox"><input type="checkbox" th:value="${item.id}">
+                        <i class="layui-icon layui-icon-ok"></i></label></td>
+                    <td th:text="${item.regionName}">库区名称</td>
+                    <td th:text="${item.code}">库位编码</td>
+                    <td th:text="${item.remark}">备注</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:replace="/common/fragment :: page"></div>
+    </div>
+</div>
+<script th:replace="/common/template :: script"></script>
+<script type="text/javascript" th:src="@{/js/plugins/jquery-2.2.4.min.js}"></script>
+<script>
+    // 提交
+    $("#allocationSubmit").on("click", function (e) {
+        e.preventDefault();
+        var checked = [];
+        var tdcheckbox = $(".timo-table td .timo-checkbox :checkbox:checked");
+        if (tdcheckbox.length == 1) {
+            tdcheckbox.each(function (key, val) {
+                checked.push("ids=" + $(val).attr("value"));
+            });
+            var allocationNum = $("#allocationNum").val();
+            if (allocationNum + 0 < 1 || isEmpty(allocationNum)) {
+                layer.msg('请输入正确的调拨数');
+            } else {
+                checked.push("allocationNum=" + $("#allocationNum").val());
+                checked.push("orderId=" + $("#orderId").val());
+                var url = "/stock/stockOrderInfo/allocationSubmit";
+                $.post(url, checked.join("&"), function (result) {
+                    if (result.code == 200) {
+                        // parent.layer.close(window.parent.layerIndex);
+                        parent.location.reload();
+                    } else {
+                        layer.msg(result.msg, {offset: '15px', time: 3000, icon: 2});
+                    }
+                });
+            }
+        } else {
+            layer.msg('请选择一条记录');
+        }
+    });
+</script>
+</body>
+</html>

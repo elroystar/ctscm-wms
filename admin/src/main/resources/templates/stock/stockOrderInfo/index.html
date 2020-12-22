@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
->
+<html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="/common/template :: header(~{::title},~{::link},~{::style})">
 </head>
 <body class="timo-layout-page">
@@ -46,10 +45,10 @@
                 </div>
             </div>
             <div class="pull-right screen-btn-group">
-                <button class="layui-btn" data-size="auto" id="getOrderInfo">
+                <button class="layui-btn" data-size="auto" id="allocationStock">
                     <i class="fa fa-check"></i> 库存调拨
                 </button>
-                <button class="layui-btn" data-size="auto" id="exportOrderInfo">
+                <button class="layui-btn" data-size="auto" id="exportStock">
                     <i class="fa fa-download"></i> 导出库存
                 </button>
             </div>
@@ -132,6 +131,45 @@
                 select.append("<option value ='" + k + "'>" + v + "</option>");
             }
         });
+    });
+
+    // 导出调拨
+    $("#allocationStock").on("click", function (e) {
+        e.preventDefault();
+        var checked = [];
+        var tdcheckbox = $(".timo-table td .timo-checkbox :checkbox:checked");
+        if (tdcheckbox.length == 1) {
+            tdcheckbox.each(function (key, val) {
+                checked.push($(val).attr("value"));
+            });
+            var url = "/stock/stockOrderInfo/allocationStock/" + checked.join("&");
+            var title = "库存调拨";
+            window.layerIndex = layer.open({
+                type: 2,
+                title: title,
+                shadeClose: true,
+                maxmin: true,
+                area: ['80%', '80%'],
+                content: [url, 'on']
+            });
+        } else {
+            layer.msg('请选择一条记录');
+        }
+    });
+
+    // 导出库存
+    $("#exportStock").on("click", function (e) {
+        e.preventDefault();
+        var checked = [];
+        var tdcheckbox = $(".timo-table td .timo-checkbox :checkbox:checked");
+        if (tdcheckbox.length == 1) {
+            tdcheckbox.each(function (key, val) {
+                checked.push($(val).attr("value"));
+            });
+            location.href = "/stock/stockOrderInfo/exportStock/" + checked.join("&");
+        } else {
+            layer.msg('请选择一条记录');
+        }
     });
 </script>
 </body>

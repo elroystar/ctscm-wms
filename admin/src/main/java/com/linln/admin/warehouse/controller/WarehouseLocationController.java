@@ -2,7 +2,9 @@ package com.linln.admin.warehouse.controller;
 
 import com.linln.admin.warehouse.domain.WarehouseLocation;
 import com.linln.admin.warehouse.domain.WarehouseLocationExcel;
+import com.linln.admin.warehouse.domain.WarehouseRegion;
 import com.linln.admin.warehouse.service.WarehouseLocationService;
+import com.linln.admin.warehouse.service.WarehouseRegionService;
 import com.linln.admin.warehouse.validator.WarehouseLocationValid;
 import com.linln.common.enums.StatusEnum;
 import com.linln.common.utils.EntityBeanUtil;
@@ -32,6 +34,9 @@ import java.util.List;
 @Controller
 @RequestMapping("/warehouse/warehouseLocation")
 public class WarehouseLocationController {
+
+    @Autowired
+    private WarehouseRegionService warehouseRegionService;
 
     @Autowired
     private WarehouseLocationService warehouseLocationService;
@@ -155,6 +160,7 @@ public class WarehouseLocationController {
         try {
             String regionId = request.getParameter("regionId");
             long parseLong = Long.parseLong(regionId);
+            WarehouseRegion warehouseRegion = warehouseRegionService.getById(parseLong);
             InputStream inputStream = multipartFile.getInputStream();
             List<WarehouseLocationExcel> excels = ExcelUtil.importExcel(WarehouseLocationExcel.class, inputStream);
             for (WarehouseLocationExcel excel : excels) {
@@ -162,6 +168,7 @@ public class WarehouseLocationController {
                 if (warehouseLocation == null) {
                     WarehouseLocation location = new WarehouseLocation();
                     location.setCode(excel.getCode());
+                    location.setRegionName(warehouseRegion.getName());
                     location.setRemark(excel.getRemark());
                     location.setRegionId(parseLong);
                     warehouseLocationService.save(location);

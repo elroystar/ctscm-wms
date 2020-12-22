@@ -68,4 +68,14 @@ public class StockOrderInfoServiceImpl implements StockOrderInfoService {
     public Integer checkSn(String sn) {
         return stockOrderInfoRepository.checkSn(sn);
     }
+
+    @Override
+    public void deleteById(Long id) {
+        stockOrderInfoRepository.deleteById(id);
+    }
+
+    @Override
+    public void updateQtyById(Integer surQty, Long orderId) {
+        stockOrderInfoRepository.updateQtyById(surQty, orderId);
+    }
 }

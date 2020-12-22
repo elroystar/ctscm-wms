@@ -68,4 +68,9 @@ public class WarehouseLocationServiceImpl implements WarehouseLocationService {
     public Boolean updateStatus(StatusEnum statusEnum, List<Long> idList) {
         return warehouseLocationRepository.updateStatus(statusEnum.getCode(), idList) > 0;
     }
+
+    @Override
+    public List<WarehouseLocation> findAll() {
+        return warehouseLocationRepository.findAll();
+    }
 }
