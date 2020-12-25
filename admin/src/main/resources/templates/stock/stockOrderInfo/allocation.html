@@ -105,7 +105,6 @@
                 var url = "/stock/stockOrderInfo/allocationSubmit";
                 $.post(url, checked.join("&"), function (result) {
                     if (result.code == 200) {
-                        // parent.layer.close(window.parent.layerIndex);
                         parent.location.reload();
                     } else {
                         layer.msg(result.msg, {offset: '15px', time: 3000, icon: 2});

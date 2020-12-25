@@ -1,8 +1,10 @@
 package com.linln.admin.stock.controller;
 
+import com.google.common.collect.Lists;
 import com.linln.admin.stock.domain.StockOrderInfo;
 import com.linln.admin.stock.service.StockOrderInfoService;
 import com.linln.admin.stock.validator.StockOrderInfoValid;
+import com.linln.admin.stockin.domain.StockinOrderInfoExcel;
 import com.linln.admin.warehouse.domain.WarehouseLocation;
 import com.linln.admin.warehouse.service.WarehouseLocationService;
 import com.linln.common.enums.StatusEnum;
@@ -10,9 +12,11 @@ import com.linln.common.utils.EntityBeanUtil;
 import com.linln.common.utils.ResultVoUtil;
 import com.linln.common.utils.StatusUtil;
 import com.linln.common.vo.ResultVo;
+import com.linln.component.excel.ExcelUtil;
 import com.linln.component.shiro.ShiroUtil;
 import com.linln.modules.system.domain.User;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -209,28 +213,19 @@ public class StockOrderInfoController {
     /**
      * 导出明细
      */
-    @GetMapping("/exportStock/{orderId}")
+    @GetMapping("/exportStock/{orderIds}")
     @ResponseBody
-    public void exportStock(@PathVariable("orderId") Long orderId) {
+    public void exportStock(@PathVariable("orderIds") String orderIds) {
 
-//        StockOrderInfo byId = stockOrderInfoService.getById(orderId);
-//        String orderNo = byId.getOrderNo();
-//        // 查询赋值
-//        StockinOrderInfo stockinOrderInfo = new StockinOrderInfo();
-//        stockinOrderInfo.setOrderNo(orderNo);
-//        stockinOrderInfo.setStatus(OrderInfoStatusEnum.WAREHOUSING.getCode());
-//        // 创建匹配器，进行动态查询匹配
-//        ExampleMatcher matcher = ExampleMatcher.matching();
-//        // 获取数据列表
-//        Example<StockinOrderInfo> example = Example.of(stockinOrderInfo, matcher);
-//        List<StockinOrderInfo> allByOrderNo = stockinOrderInfoService.getAllByOrderNo(example);
-//        List<StockinOrderInfoExcel> orderInfoExcels = Lists.newArrayList();
-//        for (StockinOrderInfo orderInfo : allByOrderNo) {
-//            StockinOrderInfoExcel orderInfoExcel = new StockinOrderInfoExcel();
-//            BeanUtils.copyProperties(orderInfo, orderInfoExcel);
-//            orderInfoExcels.add(orderInfoExcel);
-//        }
-//        // 导出Excel
-//        ExcelUtil.exportExcel(StockinOrderInfoExcel.class, orderInfoExcels);
+        String[] split = orderIds.split("&");
+        List<StockinOrderInfoExcel> orderInfoExcels = Lists.newArrayList();
+        for (String orderId : split) {
+            StockinOrderInfoExcel orderInfoExcel = new StockinOrderInfoExcel();
+            StockOrderInfo orderInfo = stockOrderInfoService.getById(Long.parseLong(orderId));
+            BeanUtils.copyProperties(orderInfo, orderInfoExcel);
+            orderInfoExcels.add(orderInfoExcel);
+        }
+        // 导出Excel
+        ExcelUtil.exportExcel(StockinOrderInfoExcel.class, orderInfoExcels);
     }
 }

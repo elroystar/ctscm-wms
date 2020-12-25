@@ -162,13 +162,13 @@
         e.preventDefault();
         var checked = [];
         var tdcheckbox = $(".timo-table td .timo-checkbox :checkbox:checked");
-        if (tdcheckbox.length == 1) {
+        if (tdcheckbox.length >= 1) {
             tdcheckbox.each(function (key, val) {
                 checked.push($(val).attr("value"));
             });
             location.href = "/stock/stockOrderInfo/exportStock/" + checked.join("&");
         } else {
-            layer.msg('请选择一条记录');
+            layer.msg('请选择需要导出的记录');
         }
     });
 </script>
