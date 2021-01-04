@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+>
+<head th:replace="/common/template :: header(~{::title},~{::link},~{::style})">
+</head>
+<body class="timo-layout-page">
+<div class="layui-card">
+    <div class="layui-card-header timo-card-header">
+        <span><i class="fa fa-bars"></i> 已出库单管理</span>
+        <i class="layui-icon layui-icon-refresh refresh-btn"></i>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-row timo-card-screen">
+            <div class="pull-left layui-form-pane timo-search-box">
+                <button class="layui-btn" data-size="auto" id="exportExcel">
+                    <i class="fa fa-download"></i> 导出报表
+                </button>
+            </div>
+        </div>
+        <div class="timo-table-wrap">
+            <table class="layui-table timo-table">
+                <thead>
+                <tr>
+                    <th class="timo-table-checkbox">
+                        <label class="timo-checkbox"><input type="checkbox">
+                            <i class="layui-icon layui-icon-ok"></i></label>
+                    </th>
+                    <th>创建者</th>
+                    <th>出库单号</th>
+                    <th>出库时间</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item:${list}">
+                    <td><label class="timo-checkbox"><input type="checkbox" th:value="${item.id}">
+                        <i class="layui-icon layui-icon-ok"></i></label></td>
+                    <td th:text="${item.createBy.getNickname()}">创建者</td>
+                    <td th:text="${item.orderNo}">出库单号</td>
+                    <td th:text="${#dates.format(item.createDate, 'yyyy-MM-dd HH:mm:ss')}">创建时间</td>
+                    <td>
+                        <a class="open-popup" data-title="查看明细"
+                           th:attr="data-url=@{'/stockout/stockoutOrder/getInfo/'+${item.orderNo}}" data-size="max"
+                           href="#">查看明细</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:replace="/common/fragment :: page"></div>
+    </div>
+</div>
+<script th:replace="/common/template :: script"></script>
+<script type="text/javascript" th:src="@{/js/plugins/jquery-2.2.4.min.js}"></script>
+<script>
+    // 导出报表
+    $("#exportExcel").on("click", function (e) {
+        e.preventDefault();
+        var checked = [];
+        var tdcheckbox = $(".timo-table td .timo-checkbox :checkbox:checked");
+        if (tdcheckbox.length >= 1) {
+            tdcheckbox.each(function (key, val) {
+                checked.push($(val).attr("value"));
+            });
+            checked.forEach(function (value) {
+                location.href = "/stockout/stockoutOrder/exportExcel/" + value;
+            })
+        } else {
+            layer.msg('请选择需要导出的记录');
+        }
+    });
+</script>
+</body>
+</html>

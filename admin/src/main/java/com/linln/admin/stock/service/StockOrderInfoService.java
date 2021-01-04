@@ -44,7 +44,24 @@ public interface StockOrderInfoService {
 
     Integer checkSn(String sn);
 
+    @Transactional
     void deleteById(Long id);
 
+    @Transactional
     void updateQtyById(Integer surQty, Long orderId);
+
+    List<StockOrderInfo> getByModel(String outValue);
+
+    List<StockOrderInfo> getBySn(String outValue);
+
+    List<StockOrderInfo> getByDn(String outValue);
+
+    List<StockOrderInfo> getByPo(String outValue);
+
+    List<StockOrderInfo> getBySo(String outValue);
+
+    List<StockOrderInfo> getByContractNo(String outValue);
+
+    List<StockOrderInfo> getByInternalNo(String outValue);
+
 }

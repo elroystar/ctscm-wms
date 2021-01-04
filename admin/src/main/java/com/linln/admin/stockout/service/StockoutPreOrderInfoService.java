@@ -1,7 +1,8 @@
 package com.linln.admin.stockout.service;
 
-import com.linln.admin.stockout.domain.StockoutOrderInfo;
+import com.linln.admin.stock.domain.StockOrderInfo;
 import com.linln.common.enums.StatusEnum;
+import com.linln.common.vo.ResultVo;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,29 +11,31 @@ import java.util.List;
 
 /**
  * @author 小懒虫
- * @date 2020/12/11
+ * @date 2020/12/25
  */
-public interface StockoutOrderInfoService {
+public interface StockoutPreOrderInfoService {
 
     /**
      * 获取分页列表数据
+     *
      * @param example 查询实例
      * @return 返回分页数据
      */
-    Page<StockoutOrderInfo> getPageList(Example<StockoutOrderInfo> example);
+    Page<StockOrderInfo> getPageList(Example<StockOrderInfo> example);
 
     /**
      * 根据ID查询数据
+     *
      * @param id 主键ID
      */
-    StockoutOrderInfo getById(Long id);
+    StockOrderInfo getById(Long id);
 
     /**
      * 保存数据
-     * @param stockoutOrderInfo 实体对象
+     *
+     * @param stockoutPreOrderInfo 实体对象
      */
-    @Transactional
-    StockoutOrderInfo save(StockoutOrderInfo stockoutOrderInfo);
+    StockOrderInfo save(StockOrderInfo stockoutPreOrderInfo);
 
     /**
      * 状态(启用，冻结，删除)/批量状态处理
@@ -40,11 +43,13 @@ public interface StockoutOrderInfoService {
     @Transactional
     Boolean updateStatus(StatusEnum statusEnum, List<Long> idList);
 
-    Integer checkSn(String sn);
+    @Transactional
+    ResultVo outQtyInput(String outType, String outValue, String outQtyInput);
 
-    void deleteById(Long id);
+    @Transactional
+    ResultVo outQtyTd(String outQtyTdArray);
 
-    List<StockoutOrderInfo> getByOutNo(String orderNo);
+    ResultVo revoke(String idArray);
 
-    void updateOutNoById(String outNo, long parseLong);
+    ResultVo sureStock(String idArray);
 }

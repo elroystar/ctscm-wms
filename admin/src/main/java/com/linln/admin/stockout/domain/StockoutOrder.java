@@ -13,10 +13,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -30,67 +28,18 @@ import javax.persistence.Table;
 
 /**
  * @author 小懒虫
- * @date 2020/12/11
+ * @date 2020/12/30
  */
 @Data
 @Entity
-@Table(name="wms_stockout_order_info")
+@Table(name="wms_stockout_order")
 @EntityListeners(AuditingEntityListener.class)
 @Where(clause = StatusUtil.NOT_DELETE)
-public class StockoutOrderInfo implements Serializable {
+public class StockoutOrder implements Serializable {
     // 主键ID
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
-    // 库存id
-    private String stockId;
-    // 出库单号
-    private String outNo;
-    // 入库单号
-    private String orderNo;
-    // 库区id
-    private String regionId;
-    // 库位id
-    private String locationId;
-    // 型号/物料号
-    private String model;
-    // 序列号/SN
-    private String sn;
-    // QTY
-    private Integer qty;
-    // 入库 DN#
-    private String dn;
-    // PO#
-    private String po;
-    // SO#
-    private String so;
-    // 合同号/批次号
-    private String contractNo;
-    // 生产日期
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date productDate;
-    // 入库重量/KG
-    private BigDecimal weight;
-    // 入库体积/CBM
-    private BigDecimal volume;
-    // 商品名称/物料描述
-    private String goodsName;
-    // 产品分类
-    private String productType;
-    // 入库供应商
-    private String supplier;
-    // 库位号
-    private String locationNo;
-    // 内部号
-    private String internalNo;
-    // 备注
-    private String remark;
-    // 创建时间
-    @CreatedDate
-    private Date createDate;
-    // 更新时间
-    @LastModifiedDate
-    private Date updateDate;
     // 创建者
     @CreatedBy
     @ManyToOne(fetch=FetchType.LAZY)
@@ -98,6 +47,16 @@ public class StockoutOrderInfo implements Serializable {
     @JoinColumn(name="create_by")
     @JsonIgnore
     private User createBy;
+    // 出库单号
+    private String orderNo;
+    // 创建时间
+    @CreatedDate
+    private Date createDate;
+    // 备注
+    private String remark;
+    // 更新时间
+    @LastModifiedDate
+    private Date updateDate;
     // 更新者
     @LastModifiedBy
     @ManyToOne(fetch=FetchType.LAZY)

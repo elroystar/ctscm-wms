@@ -1,6 +1,6 @@
 package com.linln.admin.stockout.service;
 
-import com.linln.admin.stockout.domain.StockoutOrderInfo;
+import com.linln.admin.stockout.domain.StockoutOrder;
 import com.linln.common.enums.StatusEnum;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -10,29 +10,28 @@ import java.util.List;
 
 /**
  * @author 小懒虫
- * @date 2020/12/11
+ * @date 2020/12/30
  */
-public interface StockoutOrderInfoService {
+public interface StockoutOrderService {
 
     /**
      * 获取分页列表数据
      * @param example 查询实例
      * @return 返回分页数据
      */
-    Page<StockoutOrderInfo> getPageList(Example<StockoutOrderInfo> example);
+    Page<StockoutOrder> getPageList(Example<StockoutOrder> example);
 
     /**
      * 根据ID查询数据
      * @param id 主键ID
      */
-    StockoutOrderInfo getById(Long id);
+    StockoutOrder getById(Long id);
 
     /**
      * 保存数据
-     * @param stockoutOrderInfo 实体对象
+     * @param stockoutOrder 实体对象
      */
-    @Transactional
-    StockoutOrderInfo save(StockoutOrderInfo stockoutOrderInfo);
+    StockoutOrder save(StockoutOrder stockoutOrder);
 
     /**
      * 状态(启用，冻结，删除)/批量状态处理
@@ -40,11 +39,5 @@ public interface StockoutOrderInfoService {
     @Transactional
     Boolean updateStatus(StatusEnum statusEnum, List<Long> idList);
 
-    Integer checkSn(String sn);
-
-    void deleteById(Long id);
-
-    List<StockoutOrderInfo> getByOutNo(String orderNo);
-
-    void updateOutNoById(String outNo, long parseLong);
+    Integer getCountNow();
 }

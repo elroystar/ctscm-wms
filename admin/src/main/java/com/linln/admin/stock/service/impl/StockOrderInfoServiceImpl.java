@@ -26,6 +26,7 @@ public class StockOrderInfoServiceImpl implements StockOrderInfoService {
 
     /**
      * 根据ID查询数据
+     *
      * @param id 主键ID
      */
     @Override
@@ -36,6 +37,7 @@ public class StockOrderInfoServiceImpl implements StockOrderInfoService {
 
     /**
      * 获取分页列表数据
+     *
      * @param example 查询实例
      * @return 返回分页数据
      */
@@ -48,6 +50,7 @@ public class StockOrderInfoServiceImpl implements StockOrderInfoService {
 
     /**
      * 保存数据
+     *
      * @param stockOrderInfo 实体对象
      */
     @Override
@@ -70,12 +73,50 @@ public class StockOrderInfoServiceImpl implements StockOrderInfoService {
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
         stockOrderInfoRepository.deleteById(id);
     }
 
     @Override
+    @Transactional
     public void updateQtyById(Integer surQty, Long orderId) {
         stockOrderInfoRepository.updateQtyById(surQty, orderId);
     }
+
+    @Override
+    public List<StockOrderInfo> getByModel(String outValue) {
+        return stockOrderInfoRepository.getByModel(outValue);
+    }
+
+    @Override
+    public List<StockOrderInfo> getBySn(String outValue) {
+        return stockOrderInfoRepository.getBySn(outValue);
+    }
+
+    @Override
+    public List<StockOrderInfo> getByDn(String outValue) {
+        return stockOrderInfoRepository.getByDn(outValue);
+    }
+
+    @Override
+    public List<StockOrderInfo> getByPo(String outValue) {
+        return stockOrderInfoRepository.getByPo(outValue);
+    }
+
+    @Override
+    public List<StockOrderInfo> getBySo(String outValue) {
+        return stockOrderInfoRepository.getBySo(outValue);
+    }
+
+    @Override
+    public List<StockOrderInfo> getByContractNo(String outValue) {
+        return stockOrderInfoRepository.getByContractNo(outValue);
+    }
+
+    @Override
+    public List<StockOrderInfo> getByInternalNo(String outValue) {
+        return stockOrderInfoRepository.getByInternalNo(outValue);
+    }
+
 }

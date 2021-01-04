@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/common/template :: header(~{::title},~{::link},~{::style})">
+</head>
+<body>
+    <div class="timo-detail-page">
+        <div class="timo-detail-title">基本信息</div>
+        <table class="layui-table timo-detail-table">
+            <colgroup>
+                <col width="100px"><col>
+                <col width="100px"><col>
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th>主键ID</th>
+                    <td th:text="${stockoutPreOrderInfo.id}"></td>
+                    <th>型号/物料号</th>
+                    <td th:text="${stockoutPreOrderInfo.model}"></td>
+                </tr>
+                <tr>
+                    <th>序列号/SN</th>
+                    <td th:text="${stockoutPreOrderInfo.sn}"></td>
+                    <th>QTY</th>
+                    <td th:text="${stockoutPreOrderInfo.qty}"></td>
+                </tr>
+                <tr>
+                    <th>入库 DN#</th>
+                    <td th:text="${stockoutPreOrderInfo.dn}"></td>
+                    <th>PO#</th>
+                    <td th:text="${stockoutPreOrderInfo.po}"></td>
+                </tr>
+                <tr>
+                    <th>SO#</th>
+                    <td th:text="${stockoutPreOrderInfo.so}"></td>
+                    <th>合同号/批次号</th>
+                    <td th:text="${stockoutPreOrderInfo.contractNo}"></td>
+                </tr>
+                <tr>
+                    <th>生产日期</th>
+                    <td th:text="${stockoutPreOrderInfo.productDate}"></td>
+                    <th>入库重量/KG</th>
+                    <td th:text="${stockoutPreOrderInfo.weight}"></td>
+                </tr>
+                <tr>
+                    <th>入库体积/CBM</th>
+                    <td th:text="${stockoutPreOrderInfo.volume}"></td>
+                    <th>商品名称/物料描述</th>
+                    <td th:text="${stockoutPreOrderInfo.goodsName}"></td>
+                </tr>
+                <tr>
+                    <th>产品分类</th>
+                    <td th:text="${stockoutPreOrderInfo.productType}"></td>
+                    <th>入库供应商</th>
+                    <td th:text="${stockoutPreOrderInfo.supplier}"></td>
+                </tr>
+                <tr>
+                    <th>库位号</th>
+                    <td th:text="${stockoutPreOrderInfo.locationNo}"></td>
+                    <th>内部号</th>
+                    <td th:text="${stockoutPreOrderInfo.internalNo}"></td>
+                </tr>
+                <tr>
+                    <th>创建者</th>
+                    <td th:text="${stockoutPreOrderInfo.createBy?.nickname}"></td>
+                    <th>更新者</th>
+                    <td th:text="${stockoutPreOrderInfo.updateBy?.nickname}"></td>
+                </tr>
+                <tr>
+                    <th>创建时间</th>
+                    <td th:text="${#dates.format(stockoutPreOrderInfo.createDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                    <th>更新时间</th>
+                    <td th:text="${#dates.format(stockoutPreOrderInfo.updateDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                </tr>
+                <tr>
+                    <th>备注</th>
+                    <td th:text="${stockoutPreOrderInfo.remark}" colspan="3"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+<script th:replace="/common/template :: script"></script>
+</body>
+</html>

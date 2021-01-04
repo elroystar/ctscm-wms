@@ -26,6 +26,7 @@ public class StockoutOrderInfoServiceImpl implements StockoutOrderInfoService {
 
     /**
      * 根据ID查询数据
+     *
      * @param id 主键ID
      */
     @Override
@@ -36,6 +37,7 @@ public class StockoutOrderInfoServiceImpl implements StockoutOrderInfoService {
 
     /**
      * 获取分页列表数据
+     *
      * @param example 查询实例
      * @return 返回分页数据
      */
@@ -48,9 +50,11 @@ public class StockoutOrderInfoServiceImpl implements StockoutOrderInfoService {
 
     /**
      * 保存数据
+     *
      * @param stockoutOrderInfo 实体对象
      */
     @Override
+    @Transactional
     public StockoutOrderInfo save(StockoutOrderInfo stockoutOrderInfo) {
         return stockoutOrderInfoRepository.save(stockoutOrderInfo);
     }
@@ -67,5 +71,20 @@ public class StockoutOrderInfoServiceImpl implements StockoutOrderInfoService {
     @Override
     public Integer checkSn(String sn) {
         return stockoutOrderInfoRepository.checkSn(sn);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        stockoutOrderInfoRepository.deleteById(id);
+    }
+
+    @Override
+    public List<StockoutOrderInfo> getByOutNo(String orderNo) {
+        return stockoutOrderInfoRepository.getByOutNo(orderNo);
+    }
+
+    @Override
+    public void updateOutNoById(String outNo, long parseLong) {
+        stockoutOrderInfoRepository.updateOutNoById(outNo, parseLong);
     }
 }

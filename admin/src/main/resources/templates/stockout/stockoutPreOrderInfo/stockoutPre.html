@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+>
+<head th:replace="/common/template :: header(~{::title},~{::link},~{::style})">
+</head>
+<body class="timo-layout-page">
+<div class="layui-card">
+    <div class="layui-card-header timo-card-header">
+        <span><i class="fa fa-bars"></i> 出库明细管理</span>
+        <i class="layui-icon layui-icon-refresh refresh-btn"></i>
+    </div>
+    <div class="layui-card-body">
+        <div class="layui-row timo-card-screen">
+            <div class="pull-left layui-form-pane timo-search-box">
+                <button class="layui-btn" data-size="auto" id="sureStock">
+                    <i class="fa fa-send"></i> 确定出库
+                </button>
+                <button class="layui-btn" data-size="auto" id="revoke">
+                    <i class="fa fa-truck"></i> 撤回
+                </button>
+            </div>
+        </div>
+        <div class="timo-table-wrap">
+            <table class="layui-table timo-table">
+                <thead>
+                <tr>
+                    <th class="timo-table-checkbox">
+                        <label class="timo-checkbox"><input type="checkbox">
+                            <i class="layui-icon layui-icon-ok"></i></label>
+                    </th>
+                    <th>型号/物料号</th>
+                    <th>序列号/SN</th>
+                    <th>QTY</th>
+                    <th>入库 DN#</th>
+                    <th>PO#</th>
+                    <th>SO#</th>
+                    <th>合同号/批次号</th>
+                    <th>生产日期</th>
+                    <th>入库重量/KG</th>
+                    <th>入库体积/CBM</th>
+                    <th>商品名称/物料描述</th>
+                    <th>产品分类</th>
+                    <th>入库供应商</th>
+                    <th>库位号</th>
+                    <th>内部号</th>
+                    <th>备注</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item:${list}">
+                    <td><label class="timo-checkbox"><input type="checkbox" th:value="${item.id}">
+                        <i class="layui-icon layui-icon-ok"></i></label></td>
+                    <td th:text="${item.model}">型号/物料号</td>
+                    <td th:text="${item.sn}">序列号/SN</td>
+                    <td th:text="${item.qty}">QTY</td>
+                    <td th:text="${item.dn}">入库 DN#</td>
+                    <td th:text="${item.po}">PO#</td>
+                    <td th:text="${item.so}">SO#</td>
+                    <td th:text="${item.contractNo}">合同号/批次号</td>
+                    <td th:text="${item.productDate}">生产日期</td>
+                    <td th:text="${item.weight}">入库重量/KG</td>
+                    <td th:text="${item.volume}">入库体积/CBM</td>
+                    <td th:text="${item.goodsName}">商品名称/物料描述</td>
+                    <td th:text="${item.productType}">产品分类</td>
+                    <td th:text="${item.supplier}">入库供应商</td>
+                    <td th:text="${item.locationNo}">库位号</td>
+                    <td th:text="${item.internalNo}">内部号</td>
+                    <td th:text="${item.remark}">备注</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:replace="/common/fragment :: page"></div>
+    </div>
+</div>
+<script th:replace="/common/template :: script"></script>
+<script type="text/javascript" th:src="@{/js/plugins/jquery-2.2.4.min.js}"></script>
+<script>
+    // 确定出库
+    $("#sureStock").on("click", function (e) {
+        e.preventDefault();
+        var checked = [];
+        var tdcheckbox = $(".timo-table td .timo-checkbox :checkbox:checked");
+        if (tdcheckbox.length >= 1) {
+            tdcheckbox.each(function (key, val) {
+                checked.push($(val).attr("value"));
+            });
+            var url = "/stockout/stockoutPreOrderInfo/sureStock/" + checked.join("&");
+            $.get(url, function (result) {
+                if (result.code == 200) {
+                    layer.msg(result.msg, {offset: '15px', time: 3000, icon: 1});
+                    parent.location.reload();
+                } else {
+                    layer.msg(result.msg, {offset: '15px', time: 3000, icon: 2});
+                }
+            });
+        } else {
+            layer.msg('请选择需要出库的记录');
+        }
+    });
+    // 撤回
+    $("#revoke").on("click", function (e) {
+        e.preventDefault();
+        var checked = [];
+        var tdcheckbox = $(".timo-table td .timo-checkbox :checkbox:checked");
+        if (tdcheckbox.length >= 1) {
+            tdcheckbox.each(function (key, val) {
+                checked.push($(val).attr("value"));
+            });
+            var url = "/stockout/stockoutPreOrderInfo/revoke/" + checked.join("&");
+            $.get(url, function (result) {
+                if (result.code == 200) {
+                    layer.msg(result.msg, {offset: '15px', time: 3000, icon: 1});
+                    parent.location.reload();
+                } else {
+                    layer.msg(result.msg, {offset: '15px', time: 3000, icon: 2});
+                }
+            });
+        } else {
+            layer.msg('请选择需要撤回的记录');
+        }
+    });
+</script>
+</body>
+</html>
