@@ -22,24 +22,24 @@ public interface StockOrderInfoRepository extends BaseRepository<StockOrderInfo,
     @Query(value = "update #{#entityName} set qty = ?1  where id = ?2")
     Integer updateQtyById(Integer surQty, Long orderId);
 
-    @Query(value = "select * from wms_stock_order_info where model = :outValue ", nativeQuery = true)
+    @Query(value = "select * from wms_stock_order_info where model = :outValue order by create_date ", nativeQuery = true)
     List<StockOrderInfo> getByModel(String outValue);
 
-    @Query(value = "select * from wms_stock_order_info where sn = :outValue ", nativeQuery = true)
+    @Query(value = "select * from wms_stock_order_info where sn = :outValue order by create_date ", nativeQuery = true)
     List<StockOrderInfo> getBySn(String outValue);
 
-    @Query(value = "select * from wms_stock_order_info where dn = :outValue ", nativeQuery = true)
+    @Query(value = "select * from wms_stock_order_info where dn = :outValue order by create_date ", nativeQuery = true)
     List<StockOrderInfo> getByDn(String outValue);
 
-    @Query(value = "select * from wms_stock_order_info where po = :outValue ", nativeQuery = true)
+    @Query(value = "select * from wms_stock_order_info where po = :outValue order by create_date ", nativeQuery = true)
     List<StockOrderInfo> getByPo(String outValue);
 
-    @Query(value = "select * from wms_stock_order_info where so = :outValue ", nativeQuery = true)
+    @Query(value = "select * from wms_stock_order_info where so = :outValue order by create_date ", nativeQuery = true)
     List<StockOrderInfo> getBySo(String outValue);
 
-    @Query(value = "select * from wms_stock_order_info where contract_no = :outValue ", nativeQuery = true)
+    @Query(value = "select * from wms_stock_order_info where contract_no = :outValue order by create_date ", nativeQuery = true)
     List<StockOrderInfo> getByContractNo(String outValue);
 
-    @Query(value = "select * from wms_stock_order_info where internal_no = :outValue ", nativeQuery = true)
+    @Query(value = "select * from wms_stock_order_info where internal_no = :outValue order by create_date ", nativeQuery = true)
     List<StockOrderInfo> getByInternalNo(String outValue);
 }

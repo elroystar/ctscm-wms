@@ -180,8 +180,7 @@
                         layer.msg(result.msg, {offset: '15px', time: 3000, icon: 2});
                     }
                 });
-            }
-            if (outQtyTdArray.length > 0) {
+            } else if (outQtyTdArray.length > 0) {
                 var url = "/stockout/stockoutPreOrderInfo/outQtyTd/" + outQtyTdArray.join("&");
                 $.get(url, function (result) {
                     if (result.code == 200) {
@@ -191,6 +190,8 @@
                         layer.msg(result.msg, {offset: '15px', time: 3000, icon: 2});
                     }
                 });
+            } else {
+                layer.msg('不符合出库条件');
             }
         }
     });

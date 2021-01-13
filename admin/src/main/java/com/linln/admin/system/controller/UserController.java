@@ -1,6 +1,8 @@
 package com.linln.admin.system.controller;
 
 import com.linln.admin.system.validator.UserValid;
+import com.linln.admin.warehouse.domain.WarehouseRegion;
+import com.linln.admin.warehouse.service.WarehouseRegionService;
 import com.linln.common.constant.AdminConst;
 import com.linln.common.enums.ResultEnum;
 import com.linln.common.enums.StatusEnum;
@@ -17,15 +19,19 @@ import com.linln.component.actionLog.annotation.EntityParam;
 import com.linln.component.excel.ExcelUtil;
 import com.linln.component.fileUpload.config.properties.UploadProjectProperties;
 import com.linln.component.shiro.ShiroUtil;
+import com.linln.modules.system.domain.Region;
 import com.linln.modules.system.domain.Role;
 import com.linln.modules.system.domain.User;
 import com.linln.modules.system.repository.UserRepository;
+import com.linln.modules.system.service.RegionService;
 import com.linln.modules.system.service.RoleService;
 import com.linln.modules.system.service.UserService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -35,13 +41,16 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author 小懒虫
@@ -56,6 +65,12 @@ public class UserController {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private RegionService regionService;
+
+    @Autowired
+    private WarehouseRegionService warehouseRegionService;
 
     /**
      * 列表页面
@@ -95,8 +110,9 @@ public class UserController {
 
     /**
      * 保存添加/修改的数据
+     *
      * @param valid 验证对象
-     * @param user 实体对象
+     * @param user  实体对象
      */
     @PostMapping("/save")
     @RequiresPermissions({"system:user:add", "system:user:edit"})
@@ -223,6 +239,64 @@ public class UserController {
         model.addAttribute("list", list);
         model.addAttribute("authRoles", authRoles);
         return "/system/user/role";
+    }
+
+    /**
+     * 跳转到库区分配页面
+     */
+    @GetMapping("/region/{userId}")
+    @RequiresPermissions("system:user:region")
+    public String toRegion(@PathVariable(value = "userId") String userId, Model model, HttpServletRequest request) {
+        // 获取用户当前隶属库区
+        List<Region> regions = regionService.getRegionByUserId(userId);
+        String partRegion = regions.stream().map(Region::getRegionName).collect(Collectors.joining(","));
+        // 获取库区数据
+        WarehouseRegion warehouseRegion = new WarehouseRegion();
+        warehouseRegion.setName(request.getParameter("name"));
+        // 创建匹配器，进行动态查询匹配
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withMatcher("name", match -> match.contains());
+
+        // 获取数据列表
+        Example<WarehouseRegion> example = Example.of(warehouseRegion, matcher);
+        Page<WarehouseRegion> list = warehouseRegionService.getPageList(example);
+        // 封装数据
+        model.addAttribute("list", list.getContent());
+        model.addAttribute("page", list);
+        model.addAttribute("partRegion", partRegion);
+        model.addAttribute("userId", userId);
+        return "/system/user/region";
+    }
+
+    /**
+     * 设置一条或者多条数据的状态
+     */
+    @RequestMapping("/regionEdit/{regionId}/{userId}")
+    @RequiresPermissions("system:user:regionEdit")
+    @ResponseBody
+    public ResultVo regionEdit(
+            @PathVariable("regionId") String regionId,
+            @PathVariable("userId") String userId) {
+        try {
+            regionService.deleteByUserId(userId);
+            String[] split = regionId.split("&");
+            for (String id : split) {
+                WarehouseRegion warehouseRegion = warehouseRegionService.getById(Long.parseLong(id));
+                Region region = new Region();
+                region.setCreateDate(new Date());
+                region.setUpdateDate(new Date());
+                region.setCreateBy(ShiroUtil.getSubject());
+                region.setUpdateBy(ShiroUtil.getSubject());
+                region.setRegionName(warehouseRegion.getName());
+                region.setRegionId(warehouseRegion.getId());
+                region.setUserId(Long.parseLong(userId));
+                regionService.save(region);
+            }
+            return ResultVoUtil.success("成功");
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return ResultVoUtil.error("失败，请重新操作");
+        }
     }
 
     /**
