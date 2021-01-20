@@ -10,6 +10,11 @@ import com.linln.common.utils.EntityBeanUtil;
 import com.linln.common.utils.ResultVoUtil;
 import com.linln.common.utils.StatusUtil;
 import com.linln.common.vo.ResultVo;
+import com.linln.component.shiro.ShiroUtil;
+import com.linln.modules.system.domain.Region;
+import com.linln.modules.system.domain.User;
+import com.linln.modules.system.service.RegionService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -20,6 +25,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -36,13 +42,24 @@ public class StockoutPreOrderInfoController {
     @Autowired
     private StockoutOrderInfoService stockoutOrderInfoService;
 
+    @Autowired
+    private RegionService regionService;
+
     /**
      * 列表页面
      */
     @GetMapping("/index")
     @RequiresPermissions("stockout:stockoutPreOrderInfo:index")
-    public String index(Model model, StockOrderInfo stockoutPreOrderInfo) {
+    public String index(Model model, StockOrderInfo stockoutPreOrderInfo, HttpServletRequest request) {
 
+        // 获取库区数据
+        String regionId = request.getParameter("regionId");
+        if (StringUtils.isBlank(regionId)) {
+            User subject = ShiroUtil.getSubject();
+            List<Region> region = regionService.getRegionByUserId(Long.toString(subject.getId()));
+            regionId = Long.toString(region.get(0).getRegionId());
+        }
+        stockoutPreOrderInfo.setRegionId(regionId);
         // 创建匹配器，进行动态查询匹配
         ExampleMatcher matcher = ExampleMatcher.matching();
 

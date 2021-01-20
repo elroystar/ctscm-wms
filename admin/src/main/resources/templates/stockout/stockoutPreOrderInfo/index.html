@@ -128,7 +128,8 @@
         });
         var data = JSON.parse(JSON.stringify(v));
         var select = $("#regionId");
-        var regionId = getQueryVariable("regionId");
+        // var regionId = getQueryVariable("regionId");
+        var regionId = [[${regionId}]];
         $.each(data, function (k, v) {
             if (regionId == k) {
                 select.append("<option selected value ='" + k + "'>" + v + "</option>");
