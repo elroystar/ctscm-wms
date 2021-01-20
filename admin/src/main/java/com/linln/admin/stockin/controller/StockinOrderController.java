@@ -86,7 +86,7 @@ public class StockinOrderController {
      * 跳转到添加明细页面
      */
     @GetMapping("/addInfo/{orderNo}")
-    @RequiresPermissions("stockin:stockinOrderInfo:index")
+    @RequiresPermissions("stockin:stockinOrderInfo:addInfo")
     public String addInfo(@PathVariable("orderNo") String orderNo, Model model, HttpServletRequest request) {
 
         // 获取请求参数
@@ -124,7 +124,6 @@ public class StockinOrderController {
      * 跳转到查询明细页面
      */
     @GetMapping("/getInfo/{orderId}")
-    @RequiresPermissions("stockin:stockinOrderInfo:index")
     public String getInfo(@PathVariable("orderId") Long orderId, Model model, HttpServletRequest request) {
 
         StockinOrder byId = stockinOrderService.getById(orderId);

@@ -272,7 +272,6 @@ public class UserController {
      * 设置一条或者多条数据的状态
      */
     @RequestMapping("/regionEdit/{regionId}/{userId}")
-    @RequiresPermissions("system:user:regionEdit")
     @ResponseBody
     public ResultVo regionEdit(
             @PathVariable("regionId") String regionId,

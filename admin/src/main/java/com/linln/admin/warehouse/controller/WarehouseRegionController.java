@@ -11,8 +11,11 @@ import com.linln.common.utils.ResultVoUtil;
 import com.linln.common.utils.StatusUtil;
 import com.linln.common.vo.ResultVo;
 import com.linln.component.shiro.ShiroUtil;
+import com.linln.modules.system.domain.Region;
 import com.linln.modules.system.domain.Role;
 import com.linln.modules.system.domain.User;
+import com.linln.modules.system.service.RegionService;
+import org.apache.commons.compress.utils.Lists;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -24,7 +27,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author star
@@ -39,6 +42,9 @@ public class WarehouseRegionController {
 
     @Autowired
     private WarehouseLocationService warehouseLocationService;
+
+    @Autowired
+    private RegionService regionService;
 
     /**
      * 列表页面
@@ -141,14 +147,24 @@ public class WarehouseRegionController {
     }
 
     /**
-     * 跳转到编辑页面
+     * 获取用户隶属库区
      */
     @GetMapping("/getUserRegion")
     @ResponseBody
     public List<WarehouseRegion> getUserRegion() {
-        User subject = ShiroUtil.getSubject();
-        Set<Role> subjectRoles = ShiroUtil.getSubjectRoles();
-        List<WarehouseRegion> all = warehouseRegionService.findAll();
-        return all;
+        List<WarehouseRegion> warehouseRegions = Lists.newArrayList();
+        List<String> roles = ShiroUtil.getSubjectRoles().stream().map(Role::getName).collect(Collectors.toList());
+        // 如果是一级库管员，返回所有库区
+        if (roles.contains("first-keeper")) {
+            warehouseRegions = warehouseRegionService.findAll();
+        } else {
+            User user = ShiroUtil.getSubject();
+            List<Region> region = regionService.getRegionByUserId(Long.toString(user.getId()));
+            for (Region r : region) {
+                WarehouseRegion byId = warehouseRegionService.getById(r.getRegionId());
+                warehouseRegions.add(byId);
+            }
+        }
+        return warehouseRegions;
     }
 }

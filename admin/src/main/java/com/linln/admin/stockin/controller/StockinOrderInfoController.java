@@ -83,9 +83,8 @@ public class StockinOrderInfoController {
     /**
      * 跳转到添加页面
      */
-    @GetMapping("/add/{orderNo}/{regionId}")
-    @RequiresPermissions("stockin:stockinOrderInfo:add")
-    public String toAdd(@PathVariable("orderNo") String orderNo, @PathVariable("regionId") String regionId, Model model) {
+    @GetMapping("/handK/{orderNo}/{regionId}")
+    public String handK(@PathVariable("orderNo") String orderNo, @PathVariable("regionId") String regionId, Model model) {
         StockinOrderInfo stockinOrderInfo = new StockinOrderInfo();
         stockinOrderInfo.setOrderNo(orderNo);
         stockinOrderInfo.setRegionId(regionId);
@@ -97,7 +96,7 @@ public class StockinOrderInfoController {
      * 跳转到编辑页面
      */
     @GetMapping("/edit/{id}")
-    @RequiresPermissions("stockin:stockinOrderInfo:edit")
+//    @RequiresPermissions("stockin:stockinOrderInfo:edit")
     public String toEdit(@PathVariable("id") StockinOrderInfo stockinOrderInfo, Model model) {
         model.addAttribute("stockinOrderInfo", stockinOrderInfo);
         return "/stockin/stockinOrderInfo/add";
@@ -109,7 +108,7 @@ public class StockinOrderInfoController {
      * @param valid 验证对象
      */
     @PostMapping("/save")
-    @RequiresPermissions({"stockin:stockinOrderInfo:add", "stockin:stockinOrderInfo:edit"})
+//    @RequiresPermissions({"stockin:stockinOrderInfo:add", "stockin:stockinOrderInfo:edit"})
     @ResponseBody
     public ResultVo save(@Validated StockinOrderInfoValid valid, StockinOrderInfo stockinOrderInfo) {
         // 复制保留无需修改的数据
@@ -127,7 +126,7 @@ public class StockinOrderInfoController {
      * 跳转到详细页面
      */
     @GetMapping("/detail/{id}")
-    @RequiresPermissions("stockin:stockinOrderInfo:detail")
+//    @RequiresPermissions("stockin:stockinOrderInfo:detail")
     public String toDetail(@PathVariable("id") StockinOrderInfo stockinOrderInfo, Model model) {
         model.addAttribute("stockinOrderInfo", stockinOrderInfo);
         return "/stockin/stockinOrderInfo/detail";
@@ -137,7 +136,7 @@ public class StockinOrderInfoController {
      * 设置一条或者多条数据的状态
      */
     @RequestMapping("/status/{param}")
-    @RequiresPermissions("stockin:stockinOrderInfo:status")
+//    @RequiresPermissions("stockin:stockinOrderInfo:status")
     @ResponseBody
     public ResultVo status(
             @PathVariable("param") String param,

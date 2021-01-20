@@ -29,6 +29,6 @@ public interface StockinOrderInfoRepository extends BaseRepository<StockinOrderI
     @Query(value = "select count(1) from wms_stockin_order_info where sn = :sn ", nativeQuery = true)
     Integer checkSn(String sn);
 
-    @Query(value = "select count(1) from wms_stockin_order_info where order_no = :orderNo and statu != 'warehousing'", nativeQuery = true)
+    @Query(value = "select count(1) from wms_stockin_order_info where order_no = :orderNo and status != 'warehousing'", nativeQuery = true)
     Integer checkNumByOrderNo(String orderNo);
 }

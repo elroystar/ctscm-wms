@@ -117,7 +117,9 @@ public class WarehouseLocationController {
             WarehouseLocation beWarehouseLocation = warehouseLocationService.getById(warehouseLocation.getId());
             EntityBeanUtil.copyProperties(beWarehouseLocation, warehouseLocation);
         }
-
+        Long regionId = warehouseLocation.getRegionId();
+        WarehouseRegion warehouseRegion = warehouseRegionService.getById(regionId);
+        warehouseLocation.setRegionName(warehouseRegion.getName());
         // 保存数据
         warehouseLocationService.save(warehouseLocation);
         return ResultVoUtil.SAVE_SUCCESS;
