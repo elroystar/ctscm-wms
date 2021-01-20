@@ -51,7 +51,6 @@ public class StockoutPreOrderInfoController {
     @GetMapping("/index")
     @RequiresPermissions("stockout:stockoutPreOrderInfo:index")
     public String index(Model model, StockOrderInfo stockoutPreOrderInfo, HttpServletRequest request) {
-
         // 获取库区数据
         String regionId = request.getParameter("regionId");
         if (StringUtils.isBlank(regionId)) {
@@ -70,6 +69,7 @@ public class StockoutPreOrderInfoController {
         // 封装数据
         model.addAttribute("list", list.getContent());
         model.addAttribute("page", list);
+        model.addAttribute("regionId", regionId);
         return "/stockout/stockoutPreOrderInfo/index";
     }
 
