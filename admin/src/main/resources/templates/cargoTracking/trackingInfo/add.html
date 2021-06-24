@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/common/template :: header(~{::title},~{::link},~{::style})">
+</head>
+<body>
+<div class="layui-form timo-compile">
+    <form th:action="@{/cargoTracking/trackingInfo/save}">
+        <input type="hidden" name="id" th:if="${trackingInfo}" th:value="${trackingInfo.id}">
+        <div class="layui-form-item">
+            <label class="layui-form-label">单号</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="orderNo" placeholder="请输入单号"
+                       th:value="${trackingInfo?.orderNo}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">始发地</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="origin" placeholder="请输入始发地"
+                       th:value="${trackingInfo?.origin}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">目的地</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="destination" placeholder="请输入目的地"
+                       th:value="${trackingInfo?.destination}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">船名</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="shipsName" placeholder="请输入船名"
+                       th:value="${trackingInfo?.shipsName}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">航次</label>
+            <div class="layui-input-inline">
+                <input class="layui-input" type="text" name="voyage" placeholder="请输入航次"
+                       th:value="${trackingInfo?.voyage}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">ETD</label>
+            <div class="layui-input-inline">
+                <!--                <input class="layui-input" type="text" name="etd" placeholder="请输入ETD" th:value="${trackingInfo?.etd}">-->
+                <div class="form-group">
+                    <div class="col-sm-8">
+                        <input type="text" placeholder="请输入ETD" class="layui-input form-control "
+                               th:value="${#dates.format(trackingInfo?.etd,'yyyy-MM-dd')}" id="etd" name="etd">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">ATD</label>
+            <div class="layui-input-inline">
+                <div class="form-group">
+                    <div class="col-sm-8">
+                        <input type="text" placeholder="请输入ATD" class="layui-input form-control "
+                               th:value="${#dates.format(trackingInfo?.atd,'yyyy-MM-dd')}" id="atd" name="atd">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">ETA</label>
+            <div class="layui-input-inline">
+                <div class="form-group">
+                    <div class="col-sm-8">
+                        <input type="text" placeholder="请输入ETA" class="layui-input form-control "
+                               th:value="${#dates.format(trackingInfo?.eta,'yyyy-MM-dd')}" id="eta" name="eta">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">ATA</label>
+            <div class="layui-input-inline">
+                <div class="form-group">
+                    <div class="col-sm-8">
+                        <input type="text" placeholder="请输入ATA" class="layui-input form-control "
+                               th:value="${#dates.format(trackingInfo?.ata,'yyyy-MM-dd')}" id="ata" name="ata">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+                <textarea placeholder="请输入内容" class="layui-textarea"
+                          name="remark">[[${trackingInfo?.remark}]]</textarea>
+            </div>
+        </div>
+        <div class="layui-form-item timo-finally">
+            <button class="layui-btn ajax-submit"><i class="fa fa-check-circle"></i> 保存</button>
+            <button class="layui-btn btn-secondary close-popup"><i class="fa fa-times-circle"></i> 关闭</button>
+        </div>
+    </form>
+</div>
+<script th:replace="/common/template :: script"></script>
+<!-- 引入相关js文件   jquery   layui   laydate 等 -->
+<script type="text/javascript">
+    //注意：
+    layui.use(['laydate'], function () {
+        var laydate = layui.laydate;
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#etd', //指定元素
+            done: function (value, date) {//value, date, endDate点击日期、清空、现在、确定均会触发。回调返回三个参数，分别代表：生成的值、日期时间对象、结束的日期时间对象
+                //其他操作
+            }
+        });
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#atd', //指定元素
+            done: function (value, date) {//value, date, endDate点击日期、清空、现在、确定均会触发。回调返回三个参数，分别代表：生成的值、日期时间对象、结束的日期时间对象
+                //其他操作
+            }
+        });
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#eta', //指定元素
+            done: function (value, date) {//value, date, endDate点击日期、清空、现在、确定均会触发。回调返回三个参数，分别代表：生成的值、日期时间对象、结束的日期时间对象
+                //其他操作
+            }
+        });
+        //执行一个laydate实例
+        laydate.render({
+            elem: '#ata', //指定元素
+            done: function (value, date) {//value, date, endDate点击日期、清空、现在、确定均会触发。回调返回三个参数，分别代表：生成的值、日期时间对象、结束的日期时间对象
+                //其他操作
+            }
+        });
+    });
+</script>
+</body>
+</html>

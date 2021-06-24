@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/common/template :: header(~{::title},~{::link},~{::style})">
+</head>
+<body>
+    <div class="timo-detail-page">
+        <div class="timo-detail-title">基本信息</div>
+        <table class="layui-table timo-detail-table">
+            <colgroup>
+                <col width="100px"><col>
+                <col width="100px"><col>
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th>主键ID</th>
+                    <td th:text="${trackingInfo.id}"></td>
+                    <th>单号</th>
+                    <td th:text="${trackingInfo.orderNo}"></td>
+                </tr>
+                <tr>
+                    <th>始发地</th>
+                    <td th:text="${trackingInfo.origin}"></td>
+                    <th>目的地</th>
+                    <td th:text="${trackingInfo.destination}"></td>
+                </tr>
+                <tr>
+                    <th>船名</th>
+                    <td th:text="${trackingInfo.shipsName}"></td>
+                    <th>航次</th>
+                    <td th:text="${trackingInfo.voyage}"></td>
+                </tr>
+                <tr>
+                    <th>ETD</th>
+                    <td th:text="${trackingInfo.etd}"></td>
+                    <th>ATD</th>
+                    <td th:text="${trackingInfo.atd}"></td>
+                </tr>
+                <tr>
+                    <th>ETA</th>
+                    <td th:text="${trackingInfo.eta}"></td>
+                    <th>ATA</th>
+                    <td th:text="${trackingInfo.ata}"></td>
+                </tr>
+                <tr>
+                    <th>创建者</th>
+                    <td th:text="${trackingInfo.createBy?.nickname}"></td>
+                    <th>更新者</th>
+                    <td th:text="${trackingInfo.updateBy?.nickname}"></td>
+                </tr>
+                <tr>
+                    <th>创建时间</th>
+                    <td th:text="${#dates.format(trackingInfo.createDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                    <th>更新时间</th>
+                    <td th:text="${#dates.format(trackingInfo.updateDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                </tr>
+                <tr>
+                    <th>备注</th>
+                    <td th:text="${trackingInfo.remark}" colspan="3"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+<script th:replace="/common/template :: script"></script>
+</body>
+</html>
